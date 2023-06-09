@@ -13,10 +13,10 @@ def create(path, name, body=None):
 
 def delete(path, name=None):
   path = basedir + path
-  if name:
-    try:
-      os.remove(path+name)
-    except FileNotFoundError:
-      print("No existe el archivo")
-  else:
-    shutil.rmtree(path)
+  try:
+    if name:
+     os.remove(path+name)
+    else:
+      shutil.rmtree(path)
+  except FileNotFoundError:
+    print('No se encuentra la ruta especificada')
