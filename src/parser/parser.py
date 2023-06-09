@@ -1,6 +1,7 @@
 from .ply.lex import lex, TOKEN
 from .ply.yacc import yacc
 import commands
+from re import IGNORECASE
 
 reserved = {
   'configure': 'CONFIGURE',
@@ -39,6 +40,7 @@ def t_FILE(t):
 
 @TOKEN(id)
 def t_ID(t):
+  t.value = t.value.lower()
   t.type = reserved.get(t.value,'ID')
   return t
 
@@ -50,7 +52,7 @@ def t_error(t):
   print(f"Illegal character '{t.value}'")
   t.lexer.skip(1)
 
-lexer = lex()
+lexer = lex(reflags=IGNORECASE)
 
 def testLexer(data):
   lexer.input(data)
@@ -80,7 +82,7 @@ def p_create(p):
 
 def p_delete(p):
   'delete : DELETE params'
-  #Llamar metodo
+  commands.delete(**p[2])
 
 def p_copy(p):
   'copy : COPY params'
