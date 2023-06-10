@@ -1,6 +1,6 @@
 from .ply.lex import lex, TOKEN
 from .ply.yacc import yacc
-import commands
+from commands import *
 from re import IGNORECASE
 
 reserved = {
@@ -20,18 +20,19 @@ tokens = ['ID','PATH','STRING','FILE'] + list(reserved.values())
 
 literals = ['-','>']
 
-id = r'[0-9a-zA-Z_]+'
+id = r'([0-9a-zA-Z_]+)'
 
-fileRegex = f'{id}[.]{id}'
+fileRegex = f'({id}[.]{id})'
 
-path = f'([.]*\/({id})?)+'
+string = r'("[^"]*")'
 
-t_STRING = r'"[^"]*"'
+path = f'([/]({string}|{fileRegex}|{id}))+[/]?'
 
 t_ignore = ' \t'
 
 @TOKEN(path)
 def t_PATH(t):
+  t.value = t.value.replace('"','')
   return t
 
 @TOKEN(fileRegex)
@@ -42,6 +43,10 @@ def t_FILE(t):
 def t_ID(t):
   t.value = t.value.lower()
   t.type = reserved.get(t.value,'ID')
+  return t
+
+@TOKEN(string)
+def t_STRING(t):
   return t
 
 def t_newline(t):
@@ -78,11 +83,15 @@ def p_configure(p):
 
 def p_create(p):
   'create : CREATE params'
-  commands.create(**p[2])
+  log.updateLog(data=str(p[2]).strip('{}'),type='input',action=p[1])
+  output = local.create(**p[2])
+  log.updateLog(data=output,type='output',action=p[1])
 
 def p_delete(p):
   'delete : DELETE params'
-  commands.delete(**p[2])
+  log.updateLog(data=str(p[2]).strip('{}'),type='input',action=p[1])
+  output = local.delete(**p[2])
+  log.updateLog(data=output,type='output',action=p[1])
 
 def p_copy(p):
   'copy : COPY params'
@@ -102,7 +111,9 @@ def p_modify(p):
 
 def p_add(p):
   'add : ADD params'
-  #Llamar metodo
+  log.updateLog(data=str(p[2]).strip('{}'),type='input',action=p[1])
+  output = local.add(**p[2])
+  log.updateLog(data=output,type='output',action=p[1])
 
 def p_backup(p):
   'backup : BACKUP params'
