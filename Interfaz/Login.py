@@ -1,6 +1,7 @@
 import os
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 import generic as utl
 
 
@@ -15,6 +16,18 @@ class Login():
         utl.centrar_ventana(ventana, 800, 500)
         user = tk.StringVar()
         contra = tk.StringVar()
+
+        def ingreso(root,usuario, password):  
+            
+            if (usuario.get() == "MIA" and password.get() =="mia2023"):
+                print("Bienvenido administrador")
+                
+            elif(usuario.get() == "" and password.get() ==""):
+                print('Ingrese Datos porFavor')
+                messagebox.showinfo("Atencion!", "Casillas Vacias, Ingrese su nombre de usuario y su contraseña") # Muestra un mensaje de casilla vacias
+            
+            else:
+                print("No existe el usuario")
 
 
         frame_form = tk.Frame(ventana, bd=0,
@@ -46,7 +59,7 @@ class Login():
         self.password.config(show="*")
 
         inicio = tk.Button(frame_form_fill, text="Iniciar sesion", font=(
-            'Times', 15), bg='navy', bd=0, fg="#fff")
+            'Times', 15), bg='navy', bd=0, fg="#fff", command=lambda:[ingreso(ventana,user,contra)])
         inicio.pack(fill=tk.X, padx=20, pady=20)
 
         registro = tk.Button(frame_form_fill, text="Salir", font=(

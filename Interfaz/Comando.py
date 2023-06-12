@@ -246,8 +246,15 @@ class Comandos:
         self.button_backup = tk.Button(master = self.frame_buttons, text="Backup",
                                        width=15, height=3,font=("Constantia",12,"bold"), fg="white", bg="black")
         self.button_backup.place(x=50,y=380)
+
+        def exec_funtionality():
+            path = filedialog.askdirectory()
+            name = filedialog.askopenfilename()
+            print("Prueba Nombre Archivo:"+ name +"directorio: "+path)
+
+
         self.button_exec = tk.Button(master = self.frame_buttons, text="Exec",
-                                    width=15, height=3,font=("Constantia",12,"bold"), fg="white", bg="black")
+                                    width=15, height=3,font=("Constantia",12,"bold"), fg="white", bg="black", command=exec_funtionality)
         self.button_exec.place(x=220,y=380)
         self.button_closeSesion = tk.Button(master = self.frame_buttons, text="Cerrar Sesion",
                                         width=15, height=3, font=("Constantia",12,"bold"), fg="white", bg="black")
