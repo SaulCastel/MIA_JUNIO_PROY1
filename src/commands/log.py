@@ -1,8 +1,9 @@
 import os
 from datetime import datetime
 from . import config
+import AES_ECB
 
-def updateLog(data:str, type:str, action:str):
+def updateLog(data:str, type:str, action:str, encrypt=False):
   '''
   Añade una cadena formateada dentro de la bitacora actual.
 
@@ -15,6 +16,8 @@ def updateLog(data:str, type:str, action:str):
   os.makedirs(path, exist_ok=True)
   file = open(path+'log_archivos.txt','a')
   timeStamp = currDay.isoformat(' ', 'seconds')
-  formattedStr = f'[{timeStamp}] - {type} - {action} - {data}\n'
-  file.write(formattedStr)
+  formattedStr = f'[{timeStamp}] - {type} - {action} - {data}'
+  if encrypt:
+    formattedStr = AES_ECB.encryptToHex(b'miaproyecto12345', formattedStr)
+  file.write(formattedStr+'\n')
   file.close()
