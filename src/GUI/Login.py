@@ -2,13 +2,12 @@ import os
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
-from Comando import Comandos
-import generic as utl
-
+from .Comando import Comandos
+from . import generic as utl
 
 class Login():
 
-    def __init__(self):
+    def __init__(self, users:dict):
         ventana = tk.Tk()
         ventana.title('Inicio de sesion')
         ventana.geometry('800x500')
@@ -19,20 +18,17 @@ class Login():
         contra = tk.StringVar()
 
         def ingreso(root,usuario, password):  
-            
-            if (usuario.get() == "MIA" and password.get() =="mia2023"):
-                print("Bienvenido")
+            userEntry = usuario.get()
+            passEntry = password.get()
+            if (userEntry in users and passEntry == users[userEntry]):
                 app = Comandos()
                 app.run()
                 
-                
-            elif(usuario.get() == "" and password.get() ==""):
-                print('Ingrese Datos porFavor')
+            elif(not userEntry or not passEntry):
                 messagebox.showinfo("Atencion!", "Casillas Vacias, Ingrese su nombre de usuario y su contraseña") # Muestra un mensaje de casilla vacias
             
             else:
-                print("No existe el usuario")
-
+                messagebox.showinfo("Atencion!", "Usuario o contraseña erronea.")
 
         frame_form = tk.Frame(ventana, bd=0,
                               relief=tk.SOLID, bg='#fcfcfc')
@@ -71,4 +67,5 @@ class Login():
         salir.pack(fill=tk.X, padx=20, pady=20)
         ventana.mainloop()
 
-Login()
+if __name__ == '__main__':
+  Login()

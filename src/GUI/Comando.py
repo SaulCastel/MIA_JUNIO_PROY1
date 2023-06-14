@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter.scrolledtext import ScrolledText
-import generic as utl
+from . import generic as utl
 from tkinter import *
 from tkinter import ttk
 import tkinter.ttk as ttk
