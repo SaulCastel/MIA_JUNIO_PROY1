@@ -50,8 +50,8 @@ def t_STRING(t):
   return t
 
 def t_newline(t):
-  r'\n+'
-  t.lexer.lineno += t.value.count("\n")
+  r'[\r\n]'
+  t.lexer.lineno += 1
 
 def t_error(t):
   print(f"Illegal character '{t.value}'")
@@ -103,11 +103,15 @@ def p_transfer(p):
 
 def p_rename(p):
   'rename : RENAME params'
-  #Llamar metodo
+  log.updateLog(data=str(p[2]).strip('{}'),type='input',action=p[1])
+  output = local.rename(**p[2])
+  log.updateLog(data=output,type='output',action=p[1])
 
 def p_modify(p):
   'modify : MODIFY params'
-  #Llamar metodo
+  log.updateLog(data=str(p[2]).strip('{}'),type='input',action=p[1])
+  output = local.modify(**p[2])
+  log.updateLog(data=output,type='output',action=p[1])
 
 def p_add(p):
   'add : ADD params'
