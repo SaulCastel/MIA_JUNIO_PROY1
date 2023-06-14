@@ -256,8 +256,10 @@ class Comandos:
         self.button_exec = tk.Button(master = self.frame_buttons, text="Exec",
                                     width=15, height=3,font=("Constantia",12,"bold"), fg="white", bg="black", command=exec_funtionality)
         self.button_exec.place(x=220,y=380)
+        def close(self):
+            self.frame.destroy()
         self.button_closeSesion = tk.Button(master = self.frame_buttons, text="Cerrar Sesion",
-                                        width=15, height=3, font=("Constantia",12,"bold"), fg="white", bg="black")
+                                        width=15, height=3, font=("Constantia",12,"bold"), fg="white", bg="black", command=lambda:[close(self)])
         self.button_closeSesion.place(x=130,y=470)
 
 
@@ -265,6 +267,6 @@ class Comandos:
         self.frame.mainloop()
 
 
-if __name__ == "__main__":
-    app =Comandos()
-    app.run()
+#if __name__ == "__main__":
+#    app =Comandos()
+#    app.run()

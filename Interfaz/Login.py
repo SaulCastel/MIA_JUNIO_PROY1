@@ -2,6 +2,7 @@ import os
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+from Comando import Comandos
 import generic as utl
 
 
@@ -20,7 +21,10 @@ class Login():
         def ingreso(root,usuario, password):  
             
             if (usuario.get() == "MIA" and password.get() =="mia2023"):
-                print("Bienvenido administrador")
+                print("Bienvenido")
+                app = Comandos()
+                app.run()
+                
                 
             elif(usuario.get() == "" and password.get() ==""):
                 print('Ingrese Datos porFavor')
@@ -62,9 +66,9 @@ class Login():
             'Times', 15), bg='navy', bd=0, fg="#fff", command=lambda:[ingreso(ventana,user,contra)])
         inicio.pack(fill=tk.X, padx=20, pady=20)
 
-        registro = tk.Button(frame_form_fill, text="Salir", font=(
+        salir = tk.Button(frame_form_fill, text="Salir", font=(
             'Times', 15), bg='navy', bd=0, fg="#fff", command=lambda:[ventana.destroy()])
-        registro.pack(fill=tk.X, padx=20, pady=20)
+        salir.pack(fill=tk.X, padx=20, pady=20)
         ventana.mainloop()
 
 Login()
