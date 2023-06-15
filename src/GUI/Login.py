@@ -4,6 +4,7 @@ from tkinter import ttk
 from tkinter import messagebox
 from .Comando import Comandos
 from . import generic as utl
+from ..commands import log
 
 class Login():
 
@@ -21,6 +22,8 @@ class Login():
             userEntry = usuario.get()
             passEntry = password.get()
             if (userEntry in users and passEntry == users[userEntry]):
+                log.updateLog(f'"{userEntry}" inició sesión','output','login')
+                ventana.destroy()
                 app = Comandos()
                 app.run()
                 

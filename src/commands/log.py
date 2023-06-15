@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 from . import config
-import AES_ECB
+import src.AES_ECB as AES
 
 def updateLog(data:str, type:str, action:str, encrypt=False):
   '''
@@ -18,6 +18,6 @@ def updateLog(data:str, type:str, action:str, encrypt=False):
   timeStamp = currDay.isoformat(' ', 'seconds')
   formattedStr = f'[{timeStamp}] - {type} - {action} - {data}'
   if encrypt:
-    formattedStr = AES_ECB.encryptToHex(b'miaproyecto12345', formattedStr)
+    formattedStr = AES.encryptToHex(b'miaproyecto12345', formattedStr)
   file.write(formattedStr+'\n')
   file.close()

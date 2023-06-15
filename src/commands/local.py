@@ -1,7 +1,6 @@
 import os
 import shutil
 from . import config
-import re
 
 def create(path, name, body=None) -> str:
   path = config.basedir + path
@@ -46,16 +45,18 @@ def modify(path:str, body:str) -> str:
 
 def rename(path:str, name:str) -> str:
   path = config.basedir + path
-  pathSplit = path.rsplit('/', 2)
+  pathSplit = path.rsplit('/', 1)
   newPath = ''
   if pathSplit[-1] == '':
-    newPath = pathSplit[0] + f'/{name.strip("/")}/'
+    newPath = pathSplit[0].rsplit('/',1)[0] + f'/{name.strip("/")}/'
   else:
-    newPath = pathSplit[0:2] + f'/{name}'
+    newPath = pathSplit[0] + f'/{name}'
   try:
+    print(path)
+    print(newPath)
     os.rename(path, newPath)
     return 'Ruta renombrada'
   except FileNotFoundError:
-    return 'Ruta especificado no encontrada'
+    return 'Ruta especificada no encontrada'
   except FileExistsError:
     return 'Ruta especificada ya existe'

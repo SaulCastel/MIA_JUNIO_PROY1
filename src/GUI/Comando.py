@@ -5,11 +5,9 @@ from tkinter import *
 from tkinter import ttk
 import tkinter.ttk as ttk
 from tkinter import filedialog
-
+from ..parser.parser import interpretCommand
 
 class Comandos:
-
-    
     def __init__(self, master=None):
         nameFrom= "" 
         nameTo=""
@@ -23,10 +21,16 @@ class Comandos:
                                       font=("Times new roman", 20),
                                       bg = "sky blue")
         self.label_consola.place(x=20,y=20)
+        def getCommand(arg):
+          lineStart = 'end-1c linestart'
+          lineEnd = 'end-1c lineend'
+          command = self.consol.get(lineStart, lineEnd)
+          output = interpretCommand(command.encode().decode('unicode-escape'))
+          self.consol.insert('end', f'\n> {output}')
 
         self.consol = tk.Text(master=self.frame_consola, width=60, font=("Consolas",13), fg="white", bg="black")
         self.consol.place(x=40,y=60)
-
+        self.consol.bind('<Return>', getCommand)
 
         self.frame_buttons = tk.Frame(master=self.frame,width=400,bg="steel blue")
         self.frame_buttons.pack(fill=tk.BOTH,side = tk.RIGHT, expand=True)
@@ -266,7 +270,6 @@ class Comandos:
     def run(self):
         self.frame.mainloop()
 
-
-#if __name__ == "__main__":
-#    app =Comandos()
-#    app.run()
+if __name__ == "__main__":
+  app = Comandos()
+  app.run()

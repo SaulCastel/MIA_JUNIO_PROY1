@@ -1,8 +1,9 @@
 from .ply.lex import lex, TOKEN
 from .ply.yacc import yacc
-from commands import *
+from ..commands import *
 from re import IGNORECASE
 
+returnMessage = ''
 reserved = {
   'configure': 'CONFIGURE',
   'create': 'CREATE',
@@ -54,7 +55,7 @@ def t_newline(t):
   t.lexer.lineno += 1
 
 def t_error(t):
-  print(f"Illegal character '{t.value}'")
+  globals()['returnMessage'] = f'Error lexico en: <{t.value}>'
   t.lexer.skip(1)
 
 lexer = lex(reflags=IGNORECASE)
@@ -86,12 +87,14 @@ def p_create(p):
   log.updateLog(data=str(p[2]).strip('{}'),type='input',action=p[1])
   output = local.create(**p[2])
   log.updateLog(data=output,type='output',action=p[1])
+  globals()['returnMessage'] = output
 
 def p_delete(p):
   'delete : DELETE params'
   log.updateLog(data=str(p[2]).strip('{}'),type='input',action=p[1])
   output = local.delete(**p[2])
   log.updateLog(data=output,type='output',action=p[1])
+  globals()['returnMessage'] = output
 
 def p_copy(p):
   'copy : COPY params'
@@ -106,18 +109,21 @@ def p_rename(p):
   log.updateLog(data=str(p[2]).strip('{}'),type='input',action=p[1])
   output = local.rename(**p[2])
   log.updateLog(data=output,type='output',action=p[1])
+  globals()['returnMessage'] = output
 
 def p_modify(p):
   'modify : MODIFY params'
   log.updateLog(data=str(p[2]).strip('{}'),type='input',action=p[1])
   output = local.modify(**p[2])
   log.updateLog(data=output,type='output',action=p[1])
+  globals()['returnMessage'] = output
 
 def p_add(p):
   'add : ADD params'
   log.updateLog(data=str(p[2]).strip('{}'),type='input',action=p[1])
   output = local.add(**p[2])
   log.updateLog(data=output,type='output',action=p[1])
+  globals()['returnMessage'] = output
 
 def p_backup(p):
   'backup : BACKUP params'
@@ -150,9 +156,13 @@ def p_argument_string(p):
   p[0] = p[1].strip('"')
 
 def p_error(p):
-  print(f'Syntax error at {p.value}')
+  if not p:
+    globals()['returnMessage'] = 'Comando invalido'
+    return
+  globals()['returnMessage'] = f'Error de sintaxis en: <{p.value}>'
 
 parser = yacc()
 
-def interpretCommand(command:str):
+def interpretCommand(command:str) -> str:
   parser.parse(command)
+  return returnMessage
