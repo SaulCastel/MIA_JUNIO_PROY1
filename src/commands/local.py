@@ -2,6 +2,19 @@ import os
 import shutil
 from . import config
 
+def configure(type, encrypt_log, encrypt_read, key=None) -> dict:
+  readConfig = True if encrypt_read == 'true' else False
+  if readConfig and not key:
+    raise ValueError
+  configuration = {
+    'type': type,
+    'encrypt_log': True if encrypt_log == 'true' else False,
+    'encrypt_read': readConfig,
+    'key': key.encode() if readConfig else key,
+    'configured': True
+  }
+  return configuration
+
 def create(path, name, body=None) -> str:
   path = config.basedir + path
   os.makedirs(path, exist_ok=True)
@@ -52,8 +65,6 @@ def rename(path:str, name:str) -> str:
   else:
     newPath = pathSplit[0] + f'/{name}'
   try:
-    print(path)
-    print(newPath)
     os.rename(path, newPath)
     return 'Ruta renombrada'
   except FileNotFoundError:

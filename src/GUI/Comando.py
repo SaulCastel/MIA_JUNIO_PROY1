@@ -21,14 +21,19 @@ class Comandos:
                                       font=("Times new roman", 20),
                                       bg = "sky blue")
         self.label_consola.place(x=20,y=20)
+        self.parserState = {
+          'encrypt_log':False,
+          'configured':False,
+          'message':None
+        }
         def getCommand(arg):
           lineStart = 'end-1c linestart'
           lineEnd = 'end-1c lineend'
-          command = self.consol.get(lineStart, lineEnd)
-          output = interpretCommand(command.encode().decode('unicode-escape'))
-          self.consol.insert('end', f'\n> {output}')
+          command = self.consol.get(lineStart, lineEnd).encode().decode()
+          self.parserState = interpretCommand(command,self.parserState)
+          self.consol.insert('end', f'\n> {self.parserState["message"]}')
 
-        self.consol = tk.Text(master=self.frame_consola, width=60, font=("Consolas",13), fg="white", bg="black")
+        self.consol = tk.Text(master=self.frame_consola, width=60, font=("Consolas",13), fg="white", bg="black", insertbackground='white')
         self.consol.place(x=40,y=60)
         self.consol.bind('<Return>', getCommand)
 

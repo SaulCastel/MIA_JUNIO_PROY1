@@ -3,7 +3,8 @@ from .ply.yacc import yacc
 from ..commands import *
 from re import IGNORECASE
 
-returnMessage = ''
+localState = {}
+
 reserved = {
   'configure': 'CONFIGURE',
   'create': 'CREATE',
@@ -55,7 +56,7 @@ def t_newline(t):
   t.lexer.lineno += 1
 
 def t_error(t):
-  globals()['returnMessage'] = f'Error lexico en: <{t.value}>'
+  localState['message'] = f'Error lexico en: <{t.value}>'
   t.lexer.skip(1)
 
 lexer = lex(reflags=IGNORECASE)
@@ -65,6 +66,19 @@ def testLexer(data):
   
   for tok in lexer:
     print(tok)
+
+def execCommand(command, params) -> str:
+  if localState['configured']:
+    try:
+      return command(**params)
+    except TypeError:
+      return 'Parametro(s) invalido(s)'
+  return 'El entorno no ha sido configurado'
+
+def execLogging(result,p):
+  log.updateLog(data=str(p[2]).strip('{}'),type='input',action=p[1],encrypt=localState['encrypt_log'])
+  log.updateLog(data=result,type='output',action=p[1],encrypt=localState['encrypt_log'])
+  localState['message'] = result
 
 def p_command(p):
   '''command  : configure
@@ -80,21 +94,23 @@ def p_command(p):
 
 def p_configure(p):
   'configure : CONFIGURE params'
-  #Llamar metodo
+  result = ''
+  try:
+    localState.update(local.configure(**p[2]))
+    result = 'Entorno configurado'
+  except TypeError:
+    result = 'Parametro(s) invalido(s)'
+  except ValueError:
+    result = 'Hace falta la llave para desencriptar'
+  execLogging(result, p)
 
 def p_create(p):
   'create : CREATE params'
-  log.updateLog(data=str(p[2]).strip('{}'),type='input',action=p[1])
-  output = local.create(**p[2])
-  log.updateLog(data=output,type='output',action=p[1])
-  globals()['returnMessage'] = output
+  execLogging(execCommand(local.create, p[2]), p)
 
 def p_delete(p):
   'delete : DELETE params'
-  log.updateLog(data=str(p[2]).strip('{}'),type='input',action=p[1])
-  output = local.delete(**p[2])
-  log.updateLog(data=output,type='output',action=p[1])
-  globals()['returnMessage'] = output
+  execLogging(execCommand(local.delete, p[2]), p)
 
 def p_copy(p):
   'copy : COPY params'
@@ -106,24 +122,15 @@ def p_transfer(p):
 
 def p_rename(p):
   'rename : RENAME params'
-  log.updateLog(data=str(p[2]).strip('{}'),type='input',action=p[1])
-  output = local.rename(**p[2])
-  log.updateLog(data=output,type='output',action=p[1])
-  globals()['returnMessage'] = output
+  execLogging(execCommand(local.rename, p[2]), p)
 
 def p_modify(p):
   'modify : MODIFY params'
-  log.updateLog(data=str(p[2]).strip('{}'),type='input',action=p[1])
-  output = local.modify(**p[2])
-  log.updateLog(data=output,type='output',action=p[1])
-  globals()['returnMessage'] = output
+  execLogging(execCommand(local.modify, p[2]), p)
 
 def p_add(p):
   'add : ADD params'
-  log.updateLog(data=str(p[2]).strip('{}'),type='input',action=p[1])
-  output = local.add(**p[2])
-  log.updateLog(data=output,type='output',action=p[1])
-  globals()['returnMessage'] = output
+  execLogging(execCommand(local.add, p[2]), p)
 
 def p_backup(p):
   'backup : BACKUP params'
@@ -157,12 +164,13 @@ def p_argument_string(p):
 
 def p_error(p):
   if not p:
-    globals()['returnMessage'] = 'Comando invalido'
+    localState['message'] = 'Comando invalido'
     return
-  globals()['returnMessage'] = f'Error de sintaxis en: <{p.value}>'
+  localState['message'] = f'Error de sintaxis en: <{p.value}>'
 
 parser = yacc()
 
-def interpretCommand(command:str) -> str:
+def interpretCommand(command:str, state:dict) -> dict:
+  globals()['localState'] = state
   parser.parse(command)
-  return returnMessage
+  return localState
