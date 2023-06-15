@@ -7,7 +7,6 @@ class cloud:
     def conexion(self):
         self.autenticar = GoogleAuth()
         self.autenticar.LocalWebserverAuth()
-
     #Creando una instancia para el manejo de los archivos y carpetas
     def instancia(self):
         self.drive = GoogleDrive(self.autenticar)
@@ -39,3 +38,5 @@ class cloud:
         else:
             self.crear_Archivo(name,nombreC,body)
 
+app = cloud()
+app.conexion()
