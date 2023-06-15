@@ -4,11 +4,12 @@ from . import config
 
 def configure(type, encrypt_log, encrypt_read, key=None) -> dict:
   readConfig = True if encrypt_read == 'true' else False
-  if readConfig and not key:
+  logConfig = True if encrypt_log == 'true' else False
+  if (readConfig or logConfig) and not key:
     raise ValueError
   configuration = {
     'type': type,
-    'encrypt_log': True if encrypt_log == 'true' else False,
+    'encrypt_log': logConfig,
     'encrypt_read': readConfig,
     'key': key.encode() if readConfig else key,
     'configured': True

@@ -29,7 +29,7 @@ class Comandos:
         def getCommand(arg):
           lineStart = 'end-1c linestart'
           lineEnd = 'end-1c lineend'
-          command = self.consol.get(lineStart, lineEnd).encode().decode()
+          command = self.consol.get(lineStart, lineEnd).encode().decode('unicode-escape')
           self.parserState = interpretCommand(command,self.parserState)
           self.consol.insert('end', f'\n> {self.parserState["message"]}')
 

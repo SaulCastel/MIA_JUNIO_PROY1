@@ -101,7 +101,7 @@ def p_configure(p):
   except TypeError:
     result = 'Parametro(s) invalido(s)'
   except ValueError:
-    result = 'Hace falta la llave para desencriptar'
+    result = 'Hace falta la llave de encriptacion'
   execLogging(result, p)
 
 def p_create(p):
