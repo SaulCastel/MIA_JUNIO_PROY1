@@ -40,22 +40,28 @@ def delete(path, name=None) -> str:
 def add(path, body) -> str:
   path = config.basedir + path
   try:
-    file = open(path,'a')
-    file.write(body)
-    file.close()
-    return 'Archivo actualizado'
+    file = open(path, 'a')
   except FileNotFoundError:
     return 'Archivo especificado no encontrado'
+  except IsADirectoryError:
+    return 'Ruta especificada es un directorio'
+  else:
+    with file:
+      file.write(body)
+    return 'Archivo actualizado'
 
 def modify(path:str, body:str) -> str:
   path = config.basedir + path
   try:
     file = open(path,'w')
-    file.write(body)
-    file.close()
-    return 'Archivo modificado'
   except FileNotFoundError:
     return 'Archivo especificado no encontrado'
+  except IsADirectoryError:
+    return 'Ruta especificada es un directorio'
+  else:
+    with file:
+      file.write(body)
+    return 'Archivo modificado'
 
 def rename(path:str, name:str) -> str:
   path = config.basedir + path
