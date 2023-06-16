@@ -6,6 +6,7 @@ from tkinter import ttk
 import tkinter.ttk as ttk
 from tkinter import filedialog
 from ..parser.parser import interpretCommand
+from src.commands.cloud import cloud
 
 class Comandos:
     def __init__(self, master=None):
@@ -21,10 +22,12 @@ class Comandos:
                                       font=("Times new roman", 20),
                                       bg = "sky blue")
         self.label_consola.place(x=20,y=20)
+        self.cloudObj = cloud()
         self.parserState = {
           'encrypt_log':False,
           'configured':False,
-          'message':None
+          'message':None,
+          'cloud': self.cloudObj
         }
         def getCommand(arg):
           lineStart = 'end-1c linestart'

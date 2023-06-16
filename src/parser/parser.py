@@ -106,7 +106,11 @@ def p_configure(p):
 
 def p_create(p):
   'create : CREATE params'
-  execLogging(execCommand(local.create, p[2]), p)
+  if localState['type'] == 'local':
+    execLogging(execCommand(local.create, p[2]), p)
+  else:
+    cloud = localState['cloud']
+    execLogging(execCommand(cloud.create, p[2]), p)
 
 def p_delete(p):
   'delete : DELETE params'

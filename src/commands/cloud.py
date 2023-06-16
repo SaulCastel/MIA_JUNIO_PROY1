@@ -2,7 +2,10 @@ from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 
 class cloud:
-    
+    def __init__(self):
+      self.conexion()
+      self.instancia()
+
     #Autenticar Cuenta
     def conexion(self):
         self.autenticar = GoogleAuth()
@@ -28,7 +31,8 @@ class cloud:
         archivo.SetContentString(body)
         archivo.Upload()    
 
-    def create(self, path, name, body):
+    def create(self, path, name, body) -> str:
+        '''
         carpet = path
         listaArchivos = self.drive.ListFile({'q': "title contains '"+ carpet +"' and trashed=false"}).GetList()
         nombreC= listaArchivos[0]['title'] 
@@ -37,6 +41,9 @@ class cloud:
             self.crear_Carpeta(carpet)
         else:
             self.crear_Archivo(name,nombreC,body)
+        '''
+        return path
 
-app = cloud()
-app.conexion()
+if __name__ == '__main__':
+  app = cloud()
+  app.conexion()
