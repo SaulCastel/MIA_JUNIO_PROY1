@@ -118,11 +118,11 @@ def p_delete(p):
 
 def p_copy(p):
   'copy : COPY params'
-  if localState['type'] == 'local':
-    execLogging(execCommand(local.copy, p[2]), p)
-  else:
-    cloud = localState['cloud']
-    execLogging(execCommand(cloud.copy, p[2]), p)
+  params = {
+    'source': p[2]['from'],
+    'dest': p[2]['to']
+  }
+  execLogging(execCommand(local.copy, params), p)
 
 def p_transfer(p):
   'transfer : TRANSFER params'
