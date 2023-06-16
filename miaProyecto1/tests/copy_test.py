@@ -1,5 +1,5 @@
 import unittest
-import src.commands.local as local
+from miaProyecto1.commands import local
 
 class TestCopy(unittest.TestCase):
   def test_destination_not_a_directory(self):

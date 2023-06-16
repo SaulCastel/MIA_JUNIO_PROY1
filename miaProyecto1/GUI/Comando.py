@@ -6,7 +6,7 @@ from tkinter import ttk
 import tkinter.ttk as ttk
 from tkinter import filedialog
 from ..parser.parser import interpretCommand
-from src.commands.cloud import cloud
+from ..commands.cloud import cloud
 
 class Comandos:
     def __init__(self, master=None):

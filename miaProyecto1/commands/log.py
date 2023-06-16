@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 from . import config
-import src.AES_ECB as AES
+import miaProyecto1.AES_ECB as AES
 
 def updateLog(data:str, type:str, action:str, encrypt=False):
   '''
