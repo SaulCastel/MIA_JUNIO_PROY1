@@ -5,7 +5,7 @@ class cloud:
     def __init__(self):
       self.conexion()
       self.instancia()
-
+      self.crear_folder("Archivos")
     #Autenticar Cuenta
     def conexion(self):
         self.autenticar = GoogleAuth()
@@ -35,22 +35,22 @@ class cloud:
         archivo.Upload()
 
     def create(self, path, name, body) -> str:
-        path = path[1:].strip()
-        split = path.split("/")
+        path1 = "/archivos/"+path
+        path1 = path1[1:].strip()
+        split = path1.split("/")
         try:
             while True:
                 split.remove("")
         except ValueError:
             pass
  
-        listaArchivos = self.drive.ListFile({'q': "title contains 'Archivos' and trashed=false"}).GetList()        
-        if listaArchivos:
+        listaArchivos = self.drive.ListFile({'q': "title contains 'Archivos' and trashed=false"}).GetList()   
+        existe = listaArchivos[0]['title']     
+        if listaArchivos and existe == "Archivos":
             print("Lista llena")
             id_anterior= listaArchivos[0]['title']
             if split:
-
                 for x in range(0, len(split)):
-                    print("carpetas"+split[x])
                     if x > 0 and split[x] != "":
                         carpeta = split[x]
                         id_anterior = self.buscar(split[x-1])
@@ -69,12 +69,10 @@ class cloud:
         else: 
             print("Lista vacia")
             if split:
-                
                 print("Folder Raiz:" + split[0])
                 self.crear_folder(split[0])
                 id_anterior = self.buscar(split[0])
                 for x in range(1, len(split)):
-                    print("carpetas: "+split[x]+"|")
                     if x > 0:
                         carpeta = split[x]
                         id_anterior = self.buscar(split[x-1])
