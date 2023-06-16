@@ -138,11 +138,20 @@ def p_transfer(p):
 
 def p_rename(p):
   'rename : RENAME params'
-  execLogging(execCommand(local.rename, p[2]), p)
+  if localState['type'] == 'local':
+    execLogging(execCommand(local.rename, p[2]), p)
+  else:
+    cloud = localState['cloud']
+    execLogging(execCommand(cloud.rename, p[2]), p)
 
 def p_modify(p):
   'modify : MODIFY params'
-  execLogging(execCommand(local.modify, p[2]), p)
+  if localState['type'] == 'local':
+    execLogging(execCommand(local.modify, p[2]), p)
+  else:
+    cloud = localState['cloud']
+    execLogging(execCommand(cloud.modify, p[2]), p)
+  
 
 def p_add(p):
   'add : ADD params'

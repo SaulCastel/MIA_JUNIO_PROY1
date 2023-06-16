@@ -5,13 +5,14 @@ class cloud:
     def __init__(self):
       self.conexion()
       self.instancia()
-      listaArchivos = self.drive.ListFile({'q': "title contains 'Archivos' and trashed=false"}).GetList()   
-      existe = listaArchivos[0]['title']     
-      if listaArchivos and existe == "Archivos":
+      id_archivo = self.buscar('Archivos')
+      #listaArchivos = self.drive.ListFile({'q': "title contains 'Archivos' and trashed=false"}).GetList()   
+      #existe = listaArchivos[0]['title']     
+      if id_archivo:
           print("Carpeta Raiz Existente")
       else:
-        self.crear_folder("Archivos")
-        
+          self.crear_folder("Archivos")
+
     #Autenticar Cuenta
     def conexion(self):
         self.autenticar = GoogleAuth()
@@ -123,4 +124,52 @@ class cloud:
                 eliminarArchivo = self.drive.CreateFile({'id':self.buscar(name)})
                 eliminarArchivo.Delete()
                 
-                        
+    def rename(self, path:str, name:str ) ->str:
+        path1 = "/archivos/"+path
+        path1 = path1[1:].strip()
+        split = path1.split("/")
+        try:
+            while True:
+                split.remove("")
+        except ValueError:
+            pass
+
+        listaArchivos = self.drive.ListFile({'q': "title contains 'Archivos' and trashed=false"}).GetList()   
+        existe = listaArchivos[0]['title']     
+        if listaArchivos and existe == "Archivos":
+            if split and self.buscar(name):
+                print("Error, el nombre ya existe en otro archivo y/o Carpeta")
+            elif split:
+                tam = len(split)
+                id_Archivo = self.buscar(split[tam-1])
+                file = self.drive.CreateFile({'id':id_Archivo})
+                file.FetchMetadata(fields="title") #here 404 happened
+                file["title"]= name
+                file.Upload()
+                print("Archivo Renombrado Exitosamente")
+                
+    def modify(self, path:str, body:str) ->str:
+        path1 = "/archivos/"+path
+        path1 = path1[1:].strip()
+        split = path1.split("/")
+        try:
+            while True:
+                split.remove("")
+        except ValueError:
+            pass
+
+        listaArchivos = self.drive.ListFile({'q': "title contains 'Archivos' and trashed=false"}).GetList()   
+        existe = listaArchivos[0]['title']     
+        if listaArchivos and existe == "Archivos":
+            if split:
+                tam = len(split)
+                id_Archivo = self.buscar(split[tam-1])
+                file = self.drive.CreateFile({'id':id_Archivo})
+                file.SetContentString(body)
+                file.Upload()
+                print("Contenido del Archivo modificado exitosamente")
+
+        
+
+
+        
