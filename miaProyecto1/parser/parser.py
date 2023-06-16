@@ -101,7 +101,7 @@ def p_configure(p):
   except TypeError:
     result = 'Parametro(s) invalido(s)'
   except ValueError:
-    result = 'Hace falta la llave de encriptacion'
+    result = 'Error en argumentos'
   execLogging(result, p)
 
 def p_create(p):
@@ -118,7 +118,11 @@ def p_delete(p):
 
 def p_copy(p):
   'copy : COPY params'
-  #Llamar metodo
+  if localState['type'] == 'local':
+    execLogging(execCommand(local.copy, p[2]), p)
+  else:
+    cloud = localState['cloud']
+    execLogging(execCommand(cloud.copy, p[2]), p)
 
 def p_transfer(p):
   'transfer : TRANSFER params'
