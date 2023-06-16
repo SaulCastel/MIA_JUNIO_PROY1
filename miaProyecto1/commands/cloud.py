@@ -35,15 +35,23 @@ class cloud:
         archivo.Upload()
 
     def create(self, path, name, body) -> str:
-        path = path[1:]
+        path = path[1:].strip()
         split = path.split("/")
+        try:
+            while True:
+                split.remove("")
+        except ValueError:
+            pass
+ 
         listaArchivos = self.drive.ListFile({'q': "title contains 'Archivos' and trashed=false"}).GetList()        
         if listaArchivos:
             print("Lista llena")
             id_anterior= listaArchivos[0]['title']
             if split:
+
                 for x in range(0, len(split)):
-                    if x > 0:
+                    print("carpetas"+split[x])
+                    if x > 0 and split[x] != "":
                         carpeta = split[x]
                         id_anterior = self.buscar(split[x-1])
                         print("nombre carpeta :"+split[x])
@@ -61,10 +69,12 @@ class cloud:
         else: 
             print("Lista vacia")
             if split:
+                
                 print("Folder Raiz:" + split[0])
                 self.crear_folder(split[0])
                 id_anterior = self.buscar(split[0])
                 for x in range(1, len(split)):
+                    print("carpetas: "+split[x]+"|")
                     if x > 0:
                         carpeta = split[x]
                         id_anterior = self.buscar(split[x-1])
