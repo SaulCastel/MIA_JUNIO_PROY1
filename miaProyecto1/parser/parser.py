@@ -101,7 +101,7 @@ def p_configure(p):
   except TypeError:
     result = 'Parametro(s) invalido(s)'
   except ValueError:
-    result = 'Hace falta la llave de encriptacion'
+    result = 'Error en argumentos'
   execLogging(result, p)
 
 def p_create(p):
@@ -122,7 +122,15 @@ def p_delete(p):
   
 def p_copy(p):
   'copy : COPY params'
-  #Llamar metodo
+  try:
+    params = {
+      'source': p[2]['from'],
+      'dest': p[2]['to']
+    }
+  except KeyError:
+    return execLogging('Parametro(s) invalido(s)', p)
+  else:
+    execLogging(execCommand(local.copy, params), p)
 
 def p_transfer(p):
   'transfer : TRANSFER params'

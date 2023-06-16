@@ -40,17 +40,26 @@ def delete(path, name=None) -> str:
 def copy(source, dest):
   source = config.basedir + source
   dest = config.basedir + dest
+  if not os.path.isdir(dest):
+    return 'Destino debe ser un directorio'
   try:
-    shutil.copy(source, dest)
-  except NotADirectoryError:
-    pass
+    if os.path.isfile(source):
+      shutil.copy(source, dest)
+      return 'Ruta copiada exitosamente'
+    else:
+      shutil.copytree(source, dest, dirs_exist_ok=True)
+      return 'Ruta copiada exitosamente'
+  except FileNotFoundError:
+    return 'Ruta(s) desconocida(s)'
+  except shutil.SameFileError:
+    return 'No se puede usar el mismo directorio como destino'
 
 def add(path, body) -> str:
   path = config.basedir + path
   try:
     file = open(path, 'a')
   except FileNotFoundError:
-    return 'Archivo especificado no encontrado'
+    return 'Ruta desconocida'
   except IsADirectoryError:
     return 'Ruta especificada es un directorio'
   else:
@@ -63,7 +72,7 @@ def modify(path:str, body:str) -> str:
   try:
     file = open(path,'w')
   except FileNotFoundError:
-    return 'Archivo especificado no encontrado'
+    return 'Ruta desconocida'
   except IsADirectoryError:
     return 'Ruta especificada es un directorio'
   else:
@@ -83,6 +92,12 @@ def rename(path:str, name:str) -> str:
     os.rename(path, newPath)
     return 'Ruta renombrada'
   except FileNotFoundError:
-    return 'Ruta especificada no encontrada'
+    return 'Ruta desconocida'
   except FileExistsError:
     return 'Ruta especificada ya existe'
+
+def renameFile(fileName:str) -> str:
+  fileSplit = fileName.rsplit('_',1)
+  if fileSplit[-1].isdigit():
+    return fileSplit[0] + f'_{fileSplit[1]+1}'
+  return fileSplit[0] + '_1'
