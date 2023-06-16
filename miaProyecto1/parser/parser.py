@@ -118,11 +118,15 @@ def p_delete(p):
 
 def p_copy(p):
   'copy : COPY params'
-  params = {
-    'source': p[2]['from'],
-    'dest': p[2]['to']
-  }
-  execLogging(execCommand(local.copy, params), p)
+  try:
+    params = {
+      'source': p[2]['from'],
+      'dest': p[2]['to']
+    }
+  except KeyError:
+    return execLogging('Parametro(s) invalido(s)', p)
+  else:
+    execLogging(execCommand(local.copy, params), p)
 
 def p_transfer(p):
   'transfer : TRANSFER params'
