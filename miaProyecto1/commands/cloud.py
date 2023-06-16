@@ -63,8 +63,11 @@ class cloud:
                             self.crear_subFolder(carpeta,id_anterior)
                             print("Subfolder creado")
                 tam = len(split)
-                id_carpeta = self.buscar(split[tam-1])
-                self.crear_Archivo(name,body,id_carpeta)
+                if self.buscar(name):
+                    print("El archivo ya existe")
+                else:
+                    id_carpeta = self.buscar(split[tam-1])
+                    self.crear_Archivo(name,body,id_carpeta)
         else: 
             print("Lista vacia")
             if split:
