@@ -114,8 +114,12 @@ def p_create(p):
 
 def p_delete(p):
   'delete : DELETE params'
-  execLogging(execCommand(local.delete, p[2]), p)
-
+  if localState['type'] == 'local':
+    execLogging(execCommand(local.delete, p[2]), p)
+  else:
+    cloud = localState['cloud']
+    execLogging(execCommand(cloud.delete, p[2]), p)
+  
 def p_copy(p):
   'copy : COPY params'
   #Llamar metodo

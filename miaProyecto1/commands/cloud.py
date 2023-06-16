@@ -47,7 +47,6 @@ class cloud:
         listaArchivos = self.drive.ListFile({'q': "title contains 'Archivos' and trashed=false"}).GetList()   
         existe = listaArchivos[0]['title']     
         if listaArchivos and existe == "Archivos":
-            print("Lista llena")
             id_anterior= listaArchivos[0]['title']
             if split:
                 for x in range(0, len(split)):
@@ -86,5 +85,33 @@ class cloud:
                 tam = len(split)
                 print(tam)
                 tam = len(split)
-                id_carpeta = self.buscar(split[tam-1])
-                self.crear_Archivo(name,body,id_carpeta)
+                if self.buscar(name):
+                    print("El archivo ya existe")
+                else:
+                    id_carpeta = self.buscar(split[tam-1])
+                    self.crear_Archivo(name,body,id_carpeta)
+    
+    def delete(self, path, name=None) -> str:
+        print("Eliminando ......")
+        path1 = "/archivos/"+path
+        path1 = path1[1:].strip()
+        split = path1.split("/")
+        try:
+            while True:
+                split.remove("")
+        except ValueError:
+            pass
+
+        listaArchivos = self.drive.ListFile({'q': "title contains 'Archivos' and trashed=false"}).GetList()   
+        existe = listaArchivos[0]['title']     
+        if listaArchivos and existe == "Archivos":
+            if split and name == None:
+                tam = len(split)
+                print(self.buscar(split[tam-1]))
+                eliminarFolder = self.drive.CreateFile({'id':self.buscar(split[tam-1])})
+                eliminarFolder.Delete()
+            elif split:
+                eliminarArchivo = self.drive.CreateFile({'id':self.buscar(name)})
+                eliminarArchivo.Delete()
+                
+                        
