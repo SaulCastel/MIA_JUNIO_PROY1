@@ -5,7 +5,13 @@ class cloud:
     def __init__(self):
       self.conexion()
       self.instancia()
-      self.crear_folder("Archivos")
+      listaArchivos = self.drive.ListFile({'q': "title contains 'Archivos' and trashed=false"}).GetList()   
+      existe = listaArchivos[0]['title']     
+      if listaArchivos and existe == "Archivos":
+          print("Carpeta Raiz Existente")
+      else:
+        self.crear_folder("Archivos")
+        
     #Autenticar Cuenta
     def conexion(self):
         self.autenticar = GoogleAuth()
