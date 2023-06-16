@@ -37,6 +37,14 @@ def delete(path, name=None) -> str:
   except FileNotFoundError:
     return 'Ruta especificada no encontrada'
 
+def copy(source, dest):
+  source = config.basedir + source
+  dest = config.basedir + dest
+  try:
+    shutil.copy(source, dest)
+  except NotADirectoryError:
+    pass
+
 def add(path, body) -> str:
   path = config.basedir + path
   try:
