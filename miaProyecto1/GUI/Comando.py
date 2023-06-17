@@ -74,7 +74,7 @@ class Comandos:
                 self.parserState = interpretCommand(command, self.parserState)
                 self.consol.insert('end', f'\n[exec out] {self.parserState["message"]}')
             timeElapsed = '{:.2f}'.format(time.time() - start)
-            return f'{len(commands)} comando(s) ejecutado(s), tiempo de procesamiento: {timeElapsed}'
+            return f'{len(commands)} comando(s) ejecutado(s), tiempo de procesamiento: {timeElapsed}s'
 
         self.consol = tk.Text(master=self.frame_consola, width=60, font=("Consolas",13), fg="white", bg="black", insertbackground='white')
         self.consol.place(x=40,y=60)
