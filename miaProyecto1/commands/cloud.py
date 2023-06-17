@@ -214,15 +214,11 @@ class cloud:
                             print(file_list[x]['title'], file_list[x]['id'])
                             fileOriginal = self.drive.CreateFile({'id': file_list[x]['id']})
                             nameOriginal = fileOriginal['title']
-                            cambio = nameOriginal.split(".")
-                            name= cambio[0] + "(copy)."+cambio[1]
-                            self.copiarArchivo(file_list[x]['id'],id_folder,name)
+                            self.copiarArchivo(file_list[x]['id'],id_folder,nameOriginal)
                     else:
                         fileOriginal = self.drive.CreateFile({'id': id_Archivo})
                         nameOriginal = fileOriginal['title']
-                        cambio = nameOriginal.split(".")
-                        newName= cambio[0] + "(copy)."+cambio[1]
-                        self.copiarArchivo(id_Archivo, id_folder,newName)
+                        self.copiarArchivo(id_Archivo, id_folder,nameOriginal)
                 elif id_Archivo == "":
                     return "Error, no existe el Archivo y/o Carpeta"
                 elif id_folder == "":
