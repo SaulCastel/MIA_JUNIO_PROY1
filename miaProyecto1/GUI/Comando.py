@@ -13,9 +13,6 @@ from .. import AES_ECB as AES
 
 class Comandos:
     def __init__(self, master=None):
-        nameFrom= "" 
-        nameTo=""
-
         self.frame = tk.Tk()
         self.frame.geometry("1000x550")
         self.frame.title("Proyecto - MIA 2023")
@@ -87,15 +84,19 @@ class Comandos:
             winC = tk.Toplevel()
             winC.title("Comando Configure")
             winC.config(width=450, height=250, bg="black")
+            #Variables para obtener comandos
+            key = tk.StringVar()
+
             labelType = Label(master=winC,text="*Type: ",bg="black", fg="White", font=("Constantia",14))
             labelType.place(x=15,y=20)
+            entryValues = ["Local", "Cloud"]
             entryType = ttk.Combobox(master=winC, width=30,
                 state="readonly",
-                values=["Local", "Cloud"],
                 font=("Times New Roman",14),
                 )
+            entryType['values'] = entryValues
             entryType.place(x=85, y=25)
-            
+
             labelEncriptL = Label(master=winC,text="*Encript Log: ",bg="black", fg="White", font=("Constantia",14))
             labelEncriptL.place(x=15,y=65)
             encriptLog = ttk.Combobox(master=winC, width=30,
@@ -116,10 +117,16 @@ class Comandos:
 
             labelLlave = Label(master=winC,text="LLave: ",bg="black", fg="White", font=("Constantia",14))
             labelLlave.place(x=15,y=155)
-            encriptRead = Entry(master=winC,font=("Times New Roman",14), width=30)
+            encriptRead = Entry(master=winC,font=("Times New Roman",14), width=30, textvariable=key)
             encriptRead.place(x=80, y=160)
 
-            buttonEnvio = Button(master=winC, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"))
+            def obtenerDatos():
+              print("Type: "+entryType.get())
+              print("encript Log: "+encriptLog.get())
+              print("encript Read: "+encriptRead.get())
+              print("Llave: "+key.get())
+
+            buttonEnvio = Button(master=winC, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"), command=obtenerDatos)
             buttonEnvio.place(x=200, y=200)            
 
         self.button_configure = tk.Button(master = self.frame_buttons, text="Configure",
@@ -130,15 +137,16 @@ class Comandos:
             winT = tk.Toplevel()
             winT.title("Comando Transfer")
             winT.config(width=450, height=250, bg="black")
+            From_ = tk.StringVar()
+            To_ = tk.StringVar()
             labelFrom = Label(master=winT,text="*From: ",bg="black", fg="White", font=("Constantia",14))
             labelFrom.place(x=15,y=20)
-            From = Entry(master=winT,font=("Constantia",14), width=20)
+            From = Entry(master=winT,font=("Constantia",14), width=20, textvariable=From_)
             From.place(x=80,y=20)
-            
-
+          
             labelTo = Label(master=winT,text="*To: ",bg="black", fg="White", font=("Constantia",14))
             labelTo.place(x=15,y=80)
-            To = Entry(master=winT,font=("Constantia",14), width=20)
+            To = Entry(master=winT,font=("Constantia",14), width=20, textvariable=To_)
             To.place(x=65,y=85)
 
             labelMode = Label(master=winT,text="*Mode : ",bg="black", fg="White", font=("Constantia",14))
@@ -149,6 +157,10 @@ class Comandos:
                 font=("Times New Roman",14),
                 )
             mode.place(x=85, y=150)
+            def obtenerdatos():
+               print("From: "+From_.get())
+               print("To: "+To_.get())
+               print("Mode: "+mode.get())
 
             buttonEnvio = Button(master=winT, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"))
             buttonEnvio.place(x=200, y=200)   
@@ -161,24 +173,30 @@ class Comandos:
             winCR = tk.Toplevel()
             winCR.title("Comando Create")
             winCR.config(width=520, height=250, bg="black")
+            nombre = tk.StringVar()
+            ruta = tk.StringVar()
+
             labelName = Label(master=winCR,text="*Name: ",bg="black", fg="White", font=("Constantia",14))
             labelName.place(x=15,y=20)
-            name = Entry(master=winCR,font=("Constantia",14), width=40)
+            name = Entry(master=winCR,font=("Constantia",14), width=40, textvariable=nombre)
             name.place(x=85,y=20)
             
             labelBody = Label(master=winCR,text="*Body: ",bg="black", fg="White", font=("Constantia",14))
             labelBody.place(x=15,y=60)
-
-
             body = ScrolledText(master=winCR,font=("Constantia",14), height=5, width=40)
             body.place(x=85,y=60)
 
             labelPath = Label(master=winCR,text="*Path : ",bg="black", fg="White", font=("Constantia",14))
             labelPath.place(x=15,y=200)
-            path = Entry(master=winCR,font=("Constantia",14), width=30)
+            path = Entry(master=winCR,font=("Constantia",14), width=30, textvariable=ruta)
             path.place(x=85, y=200)
 
-            buttonEnvio = Button(master=winCR, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"))
+            def obtenerdatos():
+               print("name: "+nombre.get())
+               print("body: "+body.get("1.0", tk.END))
+               print("path: "+ruta.get())
+
+            buttonEnvio = Button(master=winCR, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"), command=obtenerdatos)
             buttonEnvio.place(x=400, y=195)   
 
         self.button_create = tk.Button(master = self.frame_buttons, text="Create",
@@ -189,6 +207,8 @@ class Comandos:
             winR = tk.Toplevel()
             winR.title("Comando Rename")
             winR.config(width=520, height=150, bg="black")
+            ruta = tk.StringVar()
+            nombre = tk.StringVar()
             labelPath = Label(master=winR,text="*Path: ",bg="black", fg="White", font=("Constantia",14))
             labelPath.place(x=15,y=20)
             path = Entry(master=winR,font=("Constantia",14), width=40)
@@ -196,10 +216,13 @@ class Comandos:
             
             labelName = Label(master=winR,text="*Name: ",bg="black", fg="White", font=("Constantia",14))
             labelName.place(x=15,y=60)
-
             name = Entry(master=winR,font=("Constantia",14), width=40)
             name.place(x=85,y=60)
 
+            def obtenerdatos():
+               print("path: "+ruta.get())
+               print("name: "+nombre.get())
+               
             buttonEnvio = Button(master=winR, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"))
             buttonEnvio.place(x=225, y=100)   
         
@@ -211,17 +234,19 @@ class Comandos:
             winD = tk.Toplevel()
             winD.title("Comando Delete")
             winD.config(width=520, height=150, bg="black")
+            ruta = tk.StringVar()
+            nombre = tk.StringVar()
             labelPath = Label(master=winD,text="*Path: ",bg="black", fg="White", font=("Constantia",14))
             labelPath.place(x=15,y=20)
-            path = Entry(master=winD,font=("Constantia",14), width=40)
+            path = Entry(master=winD,font=("Constantia",14), width=40, textvariable=ruta)
             path.place(x=80,y=20)
-            
             labelName = Label(master=winD,text="Name: ",bg="black", fg="White", font=("Constantia",14))
             labelName.place(x=15,y=60)
-
-            name = Entry(master=winD,font=("Constantia",14), width=40)
+            name = Entry(master=winD,font=("Constantia",14), width=40, textvariable=nombre)
             name.place(x=80,y=60)
-
+            def obtenerdatos():
+               print("path: "+ruta.get())
+               print("name: "+nombre.get())
             buttonEnvio = Button(master=winD, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"))
             buttonEnvio.place(x=225, y=100)   
         
@@ -233,18 +258,19 @@ class Comandos:
             winM = tk.Toplevel()
             winM.title("Comando Modify")
             winM.config(width=520, height=250, bg="black")
+            ruta = tk.StringVar()
             labelPath = Label(master=winM,text="*Path: ",bg="black", fg="White", font=("Constantia",14))
             labelPath.place(x=15,y=20)
-            path = Entry(master=winM,font=("Constantia",14), width=42)
+            path = Entry(master=winM,font=("Constantia",14), width=42, textvariable=ruta)
             path.place(x=85,y=20)
-            
             labelBody = Label(master=winM,text="*Body: ",bg="black", fg="White", font=("Constantia",14))
             labelBody.place(x=15,y=60)
-
-
             body = ScrolledText(master=winM,font=("Constantia",14), height=5, width=40)
             body.place(x=85,y=60)
-
+            def obtenerdatos():
+               print("path: "+ruta.get())
+               print("body: "+body.get("1.0", tk.END))
+               
             buttonEnvio = Button(master=winM, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"))
             buttonEnvio.place(x=250, y=190)   
 
@@ -256,16 +282,21 @@ class Comandos:
             winC = tk.Toplevel()
             winC.title("Comando Copy")
             winC.config(width=300, height=160, bg="black")
+            From_ = tk.StringVar()
+            To_ = tk.StringVar()
             labelFrom = Label(master=winC,text="*From: ",bg="black", fg="White", font=("Constantia",14))
             labelFrom.place(x=15,y=20)
-            From = Entry(master=winC,font=("Constantia",14), width=20)
+            From = Entry(master=winC,font=("Constantia",14), width=20, textvariable=From_)
             From.place(x=80,y=20)
             
             labelTo = Label(master=winC,text="*To: ",bg="black", fg="White", font=("Constantia",14))
             labelTo.place(x=15,y=70)
-            To = Entry(master=winC,font=("Constantia",14), width=20)
+            To = Entry(master=winC,font=("Constantia",14), width=20, textvariable=To_)
             To.place(x=80,y=75)
-
+            def obtenerdatos():
+               print("From: "+From_.get())
+               print("To: "+To_.get())
+               
             buttonEnvio = Button(master=winC, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"))
             buttonEnvio.place(x=100, y=110) 
 
@@ -277,18 +308,20 @@ class Comandos:
             winA = tk.Toplevel()
             winA.title("Comando Add")
             winA.config(width=520, height=250, bg="black")
+            ruta = tk.StringVar()
             labelPath = Label(master=winA,text="*Path: ",bg="black", fg="White", font=("Constantia",14))
             labelPath.place(x=15,y=20)
-            path = Entry(master=winA,font=("Constantia",14), width=42)
+            path = Entry(master=winA,font=("Constantia",14), width=42, textvariable=ruta)
             path.place(x=85,y=20)
             
             labelBody = Label(master=winA,text="*Body: ",bg="black", fg="White", font=("Constantia",14))
             labelBody.place(x=15,y=60)
-
-
             body = ScrolledText(master=winA,font=("Constantia",14), height=5, width=40)
             body.place(x=85,y=60)
-
+            def obtenerdatos():
+               print("path: "+ruta.get())
+               print("body: "+body.get("1.0", tk.END))
+               
             buttonEnvio = Button(master=winA, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"))
             buttonEnvio.place(x=250, y=190) 
 
