@@ -151,7 +151,6 @@ def p_modify(p):
   else:
     cloud = localState['cloud']
     execLogging(execCommand(cloud.modify, p[2]), p)
-  
 
 def p_add(p):
   'add : ADD params'
@@ -163,7 +162,7 @@ def p_backup(p):
 
 def p_exec(p):
   'exec : EXEC params'
-  #Llamar metodo
+  globals()['localState'].update({'exec': True, 'exec_params': p[2]})
 
 def p_params(p):
   'params : params param'

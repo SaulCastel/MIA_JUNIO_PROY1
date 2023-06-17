@@ -37,7 +37,7 @@ def delete(path, name=None) -> str:
   except FileNotFoundError:
     return 'Ruta especificada no encontrada'
 
-def copy(source, dest):
+def copy(source, dest) -> str:
   source = config.basedir + source
   dest = config.basedir + dest
   if not os.path.isdir(dest):

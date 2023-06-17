@@ -5,8 +5,11 @@ from tkinter import *
 from tkinter import ttk
 import tkinter.ttk as ttk
 from tkinter import filedialog
+import time
 from ..parser.parser import interpretCommand
 from ..commands.cloud import cloud
+from ..commands.log import updateLog
+from .. import AES_ECB as AES
 
 class Comandos:
     def __init__(self, master=None):
@@ -23,18 +26,55 @@ class Comandos:
                                       bg = "sky blue")
         self.label_consola.place(x=20,y=20)
         self.cloudObj = cloud()
+
         self.parserState = {
           'encrypt_log':False,
+          'encrypt_read':False,
           'configured':False,
           'message':None,
-          'cloud': self.cloudObj
+          'cloud': self.cloudObj,
+          'exec': False
         }
+
         def getCommand(arg):
           lineStart = 'end-1c linestart'
           lineEnd = 'end-1c lineend'
           command = self.consol.get(lineStart, lineEnd).encode().decode('unicode-escape')
           self.parserState = interpretCommand(command,self.parserState)
+          if self.parserState['exec']:
+            params = self.parserState['exec_params']
+            updateLog(str(params).strip('{}'),'input','exec',self.parserState['encrypt_log'])
+            output = exec(params)
+            updateLog(output,'output','exec',encrypt=self.parserState['encrypt_log'])
+            self.parserState['message'] = output
+            self.parserState['exec'] = False
           self.consol.insert('end', f'\n> {self.parserState["message"]}')
+        
+        def exec(params):
+          try:
+            file = open(params['path'], 'r')
+          except KeyError:
+            return 'Parametros invalidos'
+          except FileNotFoundError:
+            return 'Ruta desconocida'
+          else:
+            commands = []
+            with file:
+              commands = file.readlines()
+            start = time.time()
+            if self.parserState['encrypt_read']:
+              for encrypted_command in commands:
+                command = AES.decryptFromHex(self.parserState['key'], encrypted_command.strip())
+                self.consol.insert('end', f'\n[exec in] {command}')
+                self.parserState = interpretCommand(command, self.parserState)
+                self.consol.insert('end', f'\n[exec out] {self.parserState["message"]}')
+            else:
+              for command in commands:
+                self.consol.insert('end', f'\n[exec in] {command}')
+                self.parserState = interpretCommand(command, self.parserState)
+                self.consol.insert('end', f'\n[exec out] {self.parserState["message"]}')
+            timeElapsed = '{:.2f}'.format(time.time() - start)
+            return f'{len(commands)} comando(s) ejecutado(s), tiempo de procesamiento: {timeElapsed}'
 
         self.consol = tk.Text(master=self.frame_consola, width=60, font=("Consolas",13), fg="white", bg="black", insertbackground='white')
         self.consol.place(x=40,y=60)
