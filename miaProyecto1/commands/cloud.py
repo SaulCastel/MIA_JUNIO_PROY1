@@ -75,6 +75,7 @@ class cloud:
                 else:
                     id_carpeta = self.buscar(split[tam-1])
                     self.crear_Archivo(name,body,id_carpeta)
+                    print("Archivo Creado Exitosamente")
         else: 
             print("Lista vacia")
             if split:
@@ -120,9 +121,11 @@ class cloud:
                 print(self.buscar(split[tam-1]))
                 eliminarFolder = self.drive.CreateFile({'id':self.buscar(split[tam-1])})
                 eliminarFolder.Delete()
+                print("Carpeta Eliminada Exitosamente")
             elif split:
                 eliminarArchivo = self.drive.CreateFile({'id':self.buscar(name)})
                 eliminarArchivo.Delete()
+                print("Archivo Eliminado Exitosamente")
                 
     def rename(self, path:str, name:str ) ->str:
         path1 = "/archivos/"+path
@@ -169,7 +172,69 @@ class cloud:
                 file.Upload()
                 print("Contenido del Archivo modificado exitosamente")
 
-        
+    def add(self, path, body) -> str:
+        path1 = "/archivos/"+path
+        path1 = path1[1:].strip()
+        split = path1.split("/")
+        try:
+            while True:
+                split.remove("")
+        except ValueError:
+            pass
 
+        listaArchivos = self.drive.ListFile({'q': "title contains 'Archivos' and trashed=false"}).GetList()   
+        existe = listaArchivos[0]['title']     
+        if listaArchivos and existe == "Archivos":
+            if split:
+                tam = len(split)
+                id_Archivo = self.buscar(split[tam-1])
+                file = self.drive.CreateFile({'id':id_Archivo})
+                contenido = file.GetContentString()
+                añadiendo = contenido + "\n" + body
+                file.SetContentString(añadiendo)
+                file.Upload()
+                print("Contenido Añadido al Archivo Exitosamente")     
 
-        
+    def copiarArchivo(self,id_archivo, id_folder, nombre):
+        self.drive.auth.service.files().copy(fileId=id_archivo,
+                           body={"parents": [{"id": id_folder}], 'title': nombre}).execute()
+    
+    def copy(self, source, dest):
+        origen = "/archivos/"+source
+        origen = origen[1:].strip()
+        splitOrigen = origen.split("/")
+
+        destino = "/archivos/"+dest
+        destino = destino[1:].strip()
+        splitDestino = destino.split("/")
+        try:
+            while True:
+                splitOrigen.remove("")
+                splitDestino.remove("")
+        except ValueError:
+            pass
+        listaArchivos = self.drive.ListFile({'q': "title contains 'Archivos' and trashed=false"}).GetList()   
+        existe = listaArchivos[0]['title']     
+        if listaArchivos and existe == "Archivos":
+            if splitOrigen and splitDestino:
+                tamO = len(splitOrigen)
+                tamD = len(splitDestino)
+                id_Archivo = self.buscar(splitOrigen[tamO-1])
+                id_folder = self.buscar(splitDestino[tamD-1])
+                type = self.drive.CreateFile({'id':id_Archivo})
+                typeFile = type['mimeType']
+                if typeFile == "application/vnd.google-apps.folder":
+                    file_list = self.drive.ListFile({'q': "'"+id_Archivo+"' in parents and trashed=false"}).GetList()
+                    for x in range(0,len(file_list)):
+                        print(file_list[x]['title'], file_list[x]['id'])
+                        fileOriginal = self.drive.CreateFile({'id': file_list[x]['id']})
+                        nameOriginal = fileOriginal['title']
+                        cambio = nameOriginal.split(".")
+                        name= cambio[0] + "(copy)."+cambio[1]
+                        self.copiarArchivo(file_list[x]['id'],id_folder,name)
+                else:
+                    fileOriginal = self.drive.CreateFile({'id': id_Archivo})
+                    nameOriginal = fileOriginal['title']
+                    cambio = nameOriginal.split(".")
+                    newName= cambio[0] + "(copy)."+cambio[1]
+                    self.copiarArchivo(id_Archivo, id_folder,newName)

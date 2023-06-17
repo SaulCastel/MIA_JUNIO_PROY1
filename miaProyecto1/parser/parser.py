@@ -130,7 +130,12 @@ def p_copy(p):
   except KeyError:
     return execLogging('Parametro(s) invalido(s)', p)
   else:
-    execLogging(execCommand(local.copy, params), p)
+    if localState['type'] == 'local':
+      execLogging(execCommand(local.copy, params), p)
+    else:
+      cloud = localState['cloud']
+      execLogging(execCommand(cloud.copy, params), p)
+
 
 def p_transfer(p):
   'transfer : TRANSFER params'
@@ -155,7 +160,12 @@ def p_modify(p):
 
 def p_add(p):
   'add : ADD params'
-  execLogging(execCommand(local.add, p[2]), p)
+  if localState['type'] == 'local':
+    execLogging(execCommand(local.add, p[2]), p)
+  else:
+    cloud = localState['cloud']
+    execLogging(execCommand(cloud.add, p[2]), p)
+  
 
 def p_backup(p):
   'backup : BACKUP params'
