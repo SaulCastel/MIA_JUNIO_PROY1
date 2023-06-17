@@ -183,7 +183,63 @@ class cloud:
         self.drive.auth.service.files().copy(fileId=id_archivo,
                            body={"parents": [{"id": id_folder}], 'title': nombre}).execute()
     
-    def copy(self, source, dest):
+    def copy(self, source, dest)-> str:
+        origen = "/archivos/"+source
+        origen = origen[1:].strip()
+        splitOrigen = origen.split("/")
+
+        destino = "/archivos/"+dest
+        destino = destino[1:].strip()
+        splitDestino = destino.split("/")
+        try:
+            while True:
+                splitOrigen.remove("")
+                splitDestino.remove("")
+        except ValueError:
+            pass
+        listaArchivos = self.drive.ListFile({'q': "title contains 'Archivos' and trashed=false"}).GetList()   
+        existe = listaArchivos[0]['title']     
+        if listaArchivos and existe == "Archivos":
+            if splitOrigen and splitDestino:
+                tamO = len(splitOrigen)
+                tamD = len(splitDestino)
+                id_Archivo = self.buscar(splitOrigen[tamO-1])
+                id_folder = self.buscar(splitDestino[tamD-1])
+                if id_Archivo and id_folder:
+                    type = self.drive.CreateFile({'id':id_Archivo})
+                    typeFile = type['mimeType']
+                    if typeFile == "application/vnd.google-apps.folder":
+                        file_list = self.drive.ListFile({'q': "'"+id_Archivo+"' in parents and trashed=false"}).GetList()
+                        for x in range(0,len(file_list)):
+                            print(file_list[x]['title'], file_list[x]['id'])
+                            fileOriginal = self.drive.CreateFile({'id': file_list[x]['id']})
+                            nameOriginal = fileOriginal['title']
+                            cambio = nameOriginal.split(".")
+                            name= cambio[0] + "(copy)."+cambio[1]
+                            self.copiarArchivo(file_list[x]['id'],id_folder,name)
+                    else:
+                        fileOriginal = self.drive.CreateFile({'id': id_Archivo})
+                        nameOriginal = fileOriginal['title']
+                        cambio = nameOriginal.split(".")
+                        newName= cambio[0] + "(copy)."+cambio[1]
+                        self.copiarArchivo(id_Archivo, id_folder,newName)
+                elif id_Archivo == "":
+                    return "Error, no existe el Archivo y/o Carpeta"
+                elif id_folder == "":
+                    return "Error, no existe la carpeta destino"
+
+
+    def transferirArchivo(self,id_archivo, id_folder):
+        archivo = self.drive.CreateFile({'id': id_archivo})
+        properties = archivo['parents']
+        archivo['parents'] = [{'isRoot': False, 
+                       'kind': 'drive#parentReference', 
+                        'id': id_folder, 
+                        'selfLink': 'https://www.googleapis.com/drive/v2/files/' + id_archivo + '/parents/' + id_folder,
+                        'parentLink': 'https://www.googleapis.com/drive/v2/files/' + id_folder}]
+        archivo.Upload(param={'supportsTeamDrives': True})
+    
+    def transfer(self, source, dest, mode)-> str:
         origen = "/archivos/"+source
         origen = origen[1:].strip()
         splitOrigen = origen.split("/")
@@ -211,14 +267,8 @@ class cloud:
                     file_list = self.drive.ListFile({'q': "'"+id_Archivo+"' in parents and trashed=false"}).GetList()
                     for x in range(0,len(file_list)):
                         print(file_list[x]['title'], file_list[x]['id'])
-                        fileOriginal = self.drive.CreateFile({'id': file_list[x]['id']})
-                        nameOriginal = fileOriginal['title']
-                        cambio = nameOriginal.split(".")
-                        name= cambio[0] + "(copy)."+cambio[1]
-                        self.copiarArchivo(file_list[x]['id'],id_folder,name)
+                        self.transferirArchivo(file_list[x]['id'],id_folder)
+                    return "Archivos Transferido Exitosamente"
                 else:
-                    fileOriginal = self.drive.CreateFile({'id': id_Archivo})
-                    nameOriginal = fileOriginal['title']
-                    cambio = nameOriginal.split(".")
-                    newName= cambio[0] + "(copy)."+cambio[1]
-                    self.copiarArchivo(id_Archivo, id_folder,newName)
+                    self.transferirArchivo(id_Archivo, id_folder)
+                    return "Archivo Transferido Exitosamente"
