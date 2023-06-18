@@ -39,15 +39,12 @@ class Comandos:
           command = self.consol.get(lineStart, lineEnd).encode().decode('unicode-escape')
           self.parserState = interpretCommand(command,self.parserState)
           if self.parserState['exec']:
-            params = self.parserState['exec_params']
-            updateLog(str(params).strip('{}'),'input','exec',self.parserState['encrypt_log'])
-            output = exec(params)
-            updateLog(output,'output','exec',encrypt=self.parserState['encrypt_log'])
-            self.parserState['message'] = output
-            self.parserState['exec'] = False
+            exec()
           self.consol.insert('end', f'\n> {self.parserState["message"]}')
 
-        def exec(params):
+        def exec():
+          params = self.parserState['exec_params']
+          updateLog(str(params).strip('{}'),'input','exec',self.parserState['encrypt_log'])
           try:
             file = open(params['path'], 'r')
           except KeyError:
@@ -71,7 +68,10 @@ class Comandos:
                 self.parserState = interpretCommand(command, self.parserState)
                 self.consol.insert('end', f'\n[exec out] {self.parserState["message"]}')
             timeElapsed = '{:.2f}'.format(time.time() - start)
-            return f'{len(commands)} comando(s) ejecutado(s), tiempo de procesamiento: {timeElapsed}s'
+            output = f'{len(commands)} comando(s) ejecutado(s), tiempo de procesamiento: {timeElapsed}s'
+            updateLog(output,'output','exec',encrypt=self.parserState['encrypt_log'])
+            self.parserState['message'] = output
+            self.parserState['exec'] = False
 
         self.consol = tk.Text(master=self.frame_consola, width=60, font=("Consolas",13), fg="white", bg="black", insertbackground='white')
         self.consol.place(x=40,y=60)
@@ -125,7 +125,9 @@ class Comandos:
               command += f' -type->{entryType.get()}'
               command += f' -encrypt_log->{encriptLog.get()}'
               command += f' -encrypt_read->{encriptRead.get()}'
-              command += f' -key->{key.get()}'
+              encrypt_key = key.get()
+              if encrypt_key != '':
+                command += f' -key->{encrypt_key}'
               self.consol.insert('end', f'\n{command}')
               self.parserState = interpretCommand(command.encode().decode('unicode-escape'), self.parserState)
               self.consol.insert('end', f'\n> {self.parserState["message"]}')
@@ -263,7 +265,9 @@ class Comandos:
             def obtenerdatos():
               command = 'delete'
               command += f' -path->{ruta.get()}'
-              command += f' -name->{nombre.get()}'
+              name = nombre.get()
+              if name != '':
+                command += f' -name->{name}'
               self.consol.insert('end', f'\n{command}')
               self.parserState = interpretCommand(command.encode().decode('unicode-escape'), self.parserState)
               self.consol.insert('end', f'\n> {self.parserState["message"]}')
@@ -370,11 +374,13 @@ class Comandos:
         self.button_backup.place(x=50,y=380)
 
         def exec_funtionality():
-          path = filedialog.askdirectory()
           name = filedialog.askopenfilename()
           command = 'exec'
-          command += f'-path->{path} {name}'
+          command += f' -path->{name}'
           self.consol.insert('end', f'\n{command}')
+          self.parserState = interpretCommand(command.encode().decode('unicode-escape'), self.parserState)
+          exec()
+          self.consol.insert('end', f'\n> {self.parserState["message"]}')
 
         self.button_exec = tk.Button(master = self.frame_buttons, text="Exec",
                                     width=15, height=3,font=("Constantia",12,"bold"), fg="white", bg="black", command=exec_funtionality)
