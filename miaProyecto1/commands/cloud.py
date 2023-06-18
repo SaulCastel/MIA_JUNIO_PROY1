@@ -43,7 +43,7 @@ class cloud:
         archivo.Upload()
 
     def create(self, path, name, body) -> str:
-        path1 = "/archivos/"+path
+        path1 = "/Archivos/"+path
         path1 = path1[1:].strip()
         split = path1.split("/")
         try:
@@ -90,7 +90,7 @@ class cloud:
                     return "Archivo Creado Exitosamente"
     
     def delete(self, path, name=None) -> str:
-        path1 = "/archivos/"+path
+        path1 = "/Archivos/"+path
         path1 = path1[1:].strip()
         split = path1.split("/")
         try:
@@ -113,7 +113,7 @@ class cloud:
                 return "Archivo Eliminado Exitosamente"
                 
     def rename(self, path:str, name:str ) ->str:
-        path1 = "/archivos/"+path
+        path1 = "/Archivos/"+path
         path1 = path1[1:].strip()
         split = path1.split("/")
         try:
@@ -137,7 +137,7 @@ class cloud:
                 return "Archivo Renombrado Exitosamente"
                 
     def modify(self, path:str, body:str) ->str:
-        path1 = "/archivos/"+path
+        path1 = "/Archivos/"+path
         path1 = path1[1:].strip()
         split = path1.split("/")
         try:
@@ -158,7 +158,7 @@ class cloud:
                 return "Contenido del Archivo modificado exitosamente"
 
     def add(self, path, body) -> str:
-        path1 = "/archivos/"+path
+        path1 = "/Archivos/"+path
         path1 = path1[1:].strip()
         split = path1.split("/")
         try:
@@ -185,11 +185,11 @@ class cloud:
                            body={"parents": [{"id": id_folder}], 'title': nombre}).execute()
     
     def copy(self, source, dest)-> str:
-        origen = "/archivos/"+source
+        origen = "/Archivos/"+source
         origen = origen[1:].strip()
         splitOrigen = origen.split("/")
 
-        destino = "/archivos/"+dest
+        destino = "/Archivos/"+dest
         destino = destino[1:].strip()
         splitDestino = destino.split("/")
         try:
@@ -237,11 +237,11 @@ class cloud:
         archivo.Upload(param={'supportsTeamDrives': True})
     
     def transfer(self, source, dest)-> str:
-        origen = "/archivos/"+source
+        origen = "/Archivos/"+source
         origen = origen[1:].strip()
         splitOrigen = origen.split("/")
 
-        destino = "/archivos/"+dest
+        destino = "/Archivos/"+dest
         destino = destino[1:].strip()
         splitDestino = destino.split("/")
         try:
