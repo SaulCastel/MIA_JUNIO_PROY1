@@ -32,7 +32,7 @@ class Comandos:
           'cloud': self.cloudObj,
           'exec': False,
           'type': 'local',
-          'key':None
+          'llave':None
         }
 
         def getCommand(arg):
@@ -47,7 +47,7 @@ class Comandos:
         def exec():
           params = self.parserState['exec_params']
           encrypt = self.parserState['encrypt_log']
-          key = self.parserState['key']
+          key = self.parserState['llave']
           updateLog(str(params).strip('{}'),'input','exec', encrypt, key)
           try:
             file = open(params['path'], 'r')
@@ -58,10 +58,12 @@ class Comandos:
           else:
             commands = []
             with file:
+              configure = file.readline().strip()
+              self.consol.insert('end', f'\n[exec in] {configure}')
+              self.parserState = interpretCommand(configure, self.parserState)
+              self.consol.insert('end', f'\n[exec out] {self.parserState["message"]}')
               if self.parserState['encrypt_read']:
-                configure = file.readline().strip()
-                self.parserState = interpretCommand(configure, self.parserState)
-                decryptedText = AES.decryptFromHex(self.parserState['key'],file.read().strip())
+                decryptedText = AES.decryptFromHex(key,file.read().strip())
                 commands = decryptedText.split('\n')
               else:
                 commands = file.readlines()
@@ -130,7 +132,7 @@ class Comandos:
               command += f' -encrypt_read->{encriptRead.get()}'
               encrypt_key = key.get()
               if encrypt_key != '':
-                command += f' -key->{encrypt_key}'
+                command += f' -llave->{encrypt_key}'
               self.consol.insert('end', f'\n{command}')
               self.parserState = interpretCommand(command.encode().decode('unicode-escape'), self.parserState)
               self.consol.insert('end', f'\n> {self.parserState["message"]}')

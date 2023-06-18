@@ -79,7 +79,7 @@ def execCommand(command, params=None) -> str:
 
 def execLogging(result,p):
   encrypt=localState['encrypt_log']
-  key = localState['key']
+  key = localState['llave']
   data = 'Ningun parametro'
   if len(p) > 2:
     data = str(p[2]).strip('{}')

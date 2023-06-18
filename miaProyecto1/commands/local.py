@@ -3,16 +3,16 @@ import shutil
 from . import config
 import re
 
-def configure(type, encrypt_log, encrypt_read, key=None) -> dict:
+def configure(type, encrypt_log, encrypt_read, llave=None) -> dict:
   readConfig = True if encrypt_read == 'true' else False
   logConfig = True if encrypt_log == 'true' else False
-  if (readConfig or logConfig) and not key:
+  if (readConfig or logConfig) and not llave:
     raise ValueError
   configuration = {
     'type': type,
     'encrypt_log': logConfig,
     'encrypt_read': readConfig,
-    'key': key.encode() if readConfig else key,
+    'llave': llave.encode() if readConfig else llave,
     'configured': True
   }
   return configuration
