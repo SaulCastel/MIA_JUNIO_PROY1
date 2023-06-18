@@ -139,7 +139,22 @@ def p_copy(p):
 
 def p_transfer(p):
   'transfer : TRANSFER params'
-  #Llamar metodo
+  try:
+    params = {
+      'source': p[2]['from'],
+      'dest': p[2]['to']
+    }
+    if p[2]['mode'] != localState['type']:
+      message = f'Modo incompatible, entorno configura es {localState["type"]}'
+      return execLogging(message, p)
+  except KeyError:
+    return execLogging('Parametro(s) invalido(s)', p)
+  else:
+    if localState['type'] == 'local':
+      execLogging(execCommand(local.transfer, params), p)
+    else:
+      cloud = localState['cloud']
+      execLogging(execCommand(cloud.transfer, params), p)
 
 def p_rename(p):
   'rename : RENAME params'

@@ -235,7 +235,7 @@ class cloud:
                         'parentLink': 'https://www.googleapis.com/drive/v2/files/' + id_folder}]
         archivo.Upload(param={'supportsTeamDrives': True})
     
-    def transfer(self, source, dest, mode)-> str:
+    def transfer(self, source, dest)-> str:
         origen = "/archivos/"+source
         origen = origen[1:].strip()
         splitOrigen = origen.split("/")

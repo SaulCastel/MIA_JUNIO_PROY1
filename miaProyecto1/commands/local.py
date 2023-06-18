@@ -1,6 +1,7 @@
 import os
 import shutil
 from . import config
+import re
 
 def configure(type, encrypt_log, encrypt_read, key=None) -> dict:
   readConfig = True if encrypt_read == 'true' else False
@@ -40,19 +41,42 @@ def delete(path, name=None) -> str:
 def copy(source, dest) -> str:
   source = config.basedir + source
   dest = config.basedir + dest
-  if not os.path.isdir(dest):
-    return 'Destino debe ser un directorio'
   try:
-    if os.path.isfile(source):
+    if not re.fullmatch(config.pathRegex, source):
       shutil.copy(source, dest)
       return 'Ruta copiada exitosamente'
     else:
       shutil.copytree(source, dest, dirs_exist_ok=True)
       return 'Ruta copiada exitosamente'
   except FileNotFoundError:
-    return 'Ruta(s) desconocida(s)'
+    return 'Ruta desconocida'
   except shutil.SameFileError:
     return 'No se puede usar el mismo directorio como destino'
+
+def transfer(source, dest) -> str:
+  src = config.basedir + source
+  dst = config.basedir + dest
+  if not re.fullmatch(config.pathRegex, dest):
+    return 'Ruta destino debe ser un directorio'
+  os.makedirs(dst, exist_ok=True)
+  try:
+    shutil.move(src, dst)
+    return 'Ruta transferida exitosamente'
+  except FileNotFoundError:
+    return 'Ruta desconocida'
+  except shutil.Error:
+    renamed = renamePath(source)
+    dir = config.basedir + renamed[0]
+    os.makedirs(dir,exist_ok=True)
+    if not re.fullmatch(config.pathRegex, source):
+      with open(dir+renamed[1],'w') as file:
+        file.write('')
+    copy(dir, dir+renamed[1])
+    if re.fullmatch(config.pathRegex, source):
+      shutil.rmtree(dir)
+    else:
+      os.remove(dir+renamed[1])
+    return 'Ruta transferida y renombrada'
 
 def add(path, body) -> str:
   path = config.basedir + path
@@ -96,8 +120,27 @@ def rename(path:str, name:str) -> str:
   except FileExistsError:
     return 'Ruta especificada ya existe'
 
-def renameFile(fileName:str) -> str:
-  fileSplit = fileName.rsplit('_',1)
-  if fileSplit[-1].isdigit():
-    return fileSplit[0] + f'_{fileSplit[1]+1}'
-  return fileSplit[0] + '_1'
+def renamePath(path:str) -> tuple:
+  pathSplit = path.strip('/').split('/')
+  if '.' in pathSplit[-1]:
+    fileSplit = pathSplit[-1].split('.')
+    numberSplit = fileSplit[0].rsplit('_', 1)
+    digit = '1'
+    if numberSplit[-1].isdigit():
+      digit = int(numberSplit[-1]) + 1
+    pathSplit[-1] = numberSplit[0] + f'_{digit}.{fileSplit[1]}'
+    return buildPath(pathSplit)
+  else:
+    numberSplit = pathSplit[-1].split('_', 1)
+    digit = '1'
+    if numberSplit[-1].isdigit():
+      digit = int(numberSplit[-1]) + 1
+    pathSplit[-1] = numberSplit[0] + f'_{digit}'
+    return buildPath(pathSplit)
+
+def buildPath(tree: list) -> tuple:
+  path = ''
+  for i in range(len(tree)-1):
+    path += f'/{tree[i]}'
+  path += '/'
+  return (path, tree[-1])

@@ -49,7 +49,7 @@ class Comandos:
             self.parserState['message'] = output
             self.parserState['exec'] = False
           self.consol.insert('end', f'\n> {self.parserState["message"]}')
-        
+
         def exec(params):
           try:
             file = open(params['path'], 'r')
