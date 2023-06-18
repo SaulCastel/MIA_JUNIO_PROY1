@@ -58,19 +58,18 @@ class Comandos:
           else:
             commands = []
             with file:
-              commands = file.readlines()
+              if self.parserState['encrypt_read']:
+                configure = file.readline().strip()
+                self.parserState = interpretCommand(configure, self.parserState)
+                decryptedText = AES.decryptFromHex(self.parserState['key'],file.read().strip())
+                commands = decryptedText.split('\n')
+              else:
+                commands = file.readlines()
             start = time.time()
-            if self.parserState['encrypt_read']:
-              for encrypted_command in commands:
-                command = AES.decryptFromHex(self.parserState['key'], encrypted_command.strip())
-                self.consol.insert('end', f'\n[exec in] {command}')
-                self.parserState = interpretCommand(command, self.parserState)
-                self.consol.insert('end', f'\n[exec out] {self.parserState["message"]}')
-            else:
-              for command in commands:
-                self.consol.insert('end', f'\n[exec in] {command}')
-                self.parserState = interpretCommand(command, self.parserState)
-                self.consol.insert('end', f'\n[exec out] {self.parserState["message"]}')
+            for command in commands:
+              self.consol.insert('end', f'\n[exec in] {command}')
+              self.parserState = interpretCommand(command, self.parserState)
+              self.consol.insert('end', f'\n[exec out] {self.parserState["message"]}')
             timeElapsed = '{:.2f}'.format(time.time() - start)
             output = f'{len(commands)} comando(s) ejecutado(s), tiempo de procesamiento: {timeElapsed}s'
             updateLog(output,'output','exec', encrypt, key)
