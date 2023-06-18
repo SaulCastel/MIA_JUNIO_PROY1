@@ -1,5 +1,5 @@
 import os
 
-basedir = os.getcwd() + "/archivos"
+basedir = os.getcwd() + "/Archivos"
 
 pathRegex = '([/]([0-9a-zA-Z_\[\]\(\)-]+)?)+'
