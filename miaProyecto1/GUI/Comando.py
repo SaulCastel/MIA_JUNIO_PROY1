@@ -30,7 +30,9 @@ class Comandos:
           'configured':False,
           'message':None,
           'cloud': self.cloudObj,
-          'exec': False
+          'exec': False,
+          'type': 'local',
+          'key':None
         }
 
         def getCommand(arg):
@@ -119,8 +121,8 @@ class Comandos:
 
             labelLlave = Label(master=winC,text="LLave: ",bg="black", fg="White", font=("Constantia",14))
             labelLlave.place(x=15,y=155)
-            encriptRead = Entry(master=winC,font=("Times New Roman",14), width=30, textvariable=key)
-            encriptRead.place(x=80, y=160)
+            keyInput = Entry(master=winC,font=("Times New Roman",14), width=30, textvariable=key)
+            keyInput.place(x=80, y=160)
 
             def obtenerDatos():
               command = 'configure'
@@ -368,8 +370,10 @@ class Comandos:
         self.button_add.place(x=220,y=290)
 
         def backupAction():
-          #codigo para boton backup
-          pass
+          command = 'backup'
+          self.consol.insert('end', f'\n{command}')
+          self.parserState = interpretCommand(command.encode().decode('unicode-escape'), self.parserState)
+          self.consol.insert('end', f'\n> {self.parserState["message"]}')
 
         self.button_backup = tk.Button(master = self.frame_buttons, text="Backup",
                                        width=15, height=3,font=("Constantia",12,"bold"), fg="white", bg="black",command=backupAction)

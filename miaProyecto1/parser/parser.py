@@ -67,10 +67,12 @@ def testLexer(data):
   for tok in lexer:
     print(tok)
 
-def execCommand(command, params) -> str:
+def execCommand(command, params=None) -> str:
   if localState['configured']:
     try:
-      return command(**params)
+      if params:
+        return command(**params)
+      return command()
     except TypeError:
       return 'Parametro(s) invalido(s)'
   return 'El entorno no ha sido configurado'
@@ -78,7 +80,10 @@ def execCommand(command, params) -> str:
 def execLogging(result,p):
   encrypt=localState['encrypt_log']
   key = localState['key']
-  log.updateLog(data=str(p[2]).strip('{}'),type='input',action=p[1],encrypt=encrypt,key=key)
+  data = 'Ningun parametro'
+  if len(p) > 2:
+    data = str(p[2]).strip('{}')
+  log.updateLog(data=data,type='input',action=p[1],encrypt=encrypt,key=key)
   log.updateLog(data=result,type='output',action=p[1],encrypt=encrypt,key=key)
   localState['message'] = result
 
@@ -182,9 +187,10 @@ def p_add(p):
     execLogging(execCommand(cloud.add, p[2]), p)
   
 def p_backup(p):
-  'backup : BACKUP params'
-  #Llamar metodo
-
+  'backup : BACKUP'
+  cloud = localState['cloud']
+  if localState['type'] == 'local':
+    execLogging(execCommand(cloud.subir_Backup), p)
 
 def p_exec(p):
   'exec : EXEC params'

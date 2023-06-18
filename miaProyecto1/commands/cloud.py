@@ -284,3 +284,4 @@ class cloud:
                     print(archivo.read())
                     self.create(ficheroFinal, fichero, cuerpo)
                     archivo.close()
+        return 'Archivos enviados a la nube'
