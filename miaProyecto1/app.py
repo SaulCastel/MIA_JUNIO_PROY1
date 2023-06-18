@@ -1,13 +1,14 @@
 from os import makedirs, getcwd
 import miaProyecto1.AES_ECB as AES
 from .GUI import Login
+from miaProyecto1.commands import config
 
 users = {}
 def run():
-  path = getcwd()+'/archivos/'
+  path = config.basedir
   makedirs(path, exist_ok=True)
   try:
-    usersFile = open(path+'usuarios.txt', 'r')
+    usersFile = open(path+'/usuarios.txt', 'r')
   except FileNotFoundError:
     print('No se encuentra un archivo con usuarios. Terminando aplicación...')
   else:
