@@ -76,8 +76,10 @@ def execCommand(command, params) -> str:
   return 'El entorno no ha sido configurado'
 
 def execLogging(result,p):
-  log.updateLog(data=str(p[2]).strip('{}'),type='input',action=p[1],encrypt=localState['encrypt_log'])
-  log.updateLog(data=result,type='output',action=p[1],encrypt=localState['encrypt_log'])
+  encrypt=localState['encrypt_log']
+  key = localState['key']
+  log.updateLog(data=str(p[2]).strip('{}'),type='input',action=p[1],encrypt=encrypt,key=key)
+  log.updateLog(data=result,type='output',action=p[1],encrypt=encrypt,key=key)
   localState['message'] = result
 
 def p_command(p):

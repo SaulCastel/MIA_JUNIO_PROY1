@@ -3,7 +3,7 @@ from datetime import datetime
 from . import config
 import miaProyecto1.AES_ECB as AES
 
-def updateLog(data:str, type:str, action:str, encrypt=False):
+def updateLog(data:str, type:str, action:str, encrypt=False, key=None):
   '''
   Añade una cadena formateada dentro de la bitacora actual.
 
@@ -18,6 +18,6 @@ def updateLog(data:str, type:str, action:str, encrypt=False):
   timeStamp = currDay.isoformat(' ', 'seconds')
   formattedStr = f'[{timeStamp}] - {type} - {action} - {data}'
   if encrypt:
-    formattedStr = AES.encryptToHex(b'miaproyecto12345', formattedStr)
+    formattedStr = AES.encryptToHex(key, formattedStr)
   file.write(formattedStr+'\n')
   file.close()

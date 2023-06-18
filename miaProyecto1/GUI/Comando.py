@@ -44,7 +44,9 @@ class Comandos:
 
         def exec():
           params = self.parserState['exec_params']
-          updateLog(str(params).strip('{}'),'input','exec',self.parserState['encrypt_log'])
+          encrypt = self.parserState['encrypt_log']
+          key = self.parserState['key']
+          updateLog(str(params).strip('{}'),'input','exec', encrypt, key)
           try:
             file = open(params['path'], 'r')
           except KeyError:
@@ -69,7 +71,7 @@ class Comandos:
                 self.consol.insert('end', f'\n[exec out] {self.parserState["message"]}')
             timeElapsed = '{:.2f}'.format(time.time() - start)
             output = f'{len(commands)} comando(s) ejecutado(s), tiempo de procesamiento: {timeElapsed}s'
-            updateLog(output,'output','exec',encrypt=self.parserState['encrypt_log'])
+            updateLog(output,'output','exec', encrypt, key)
             self.parserState['message'] = output
             self.parserState['exec'] = False
 
