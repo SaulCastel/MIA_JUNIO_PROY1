@@ -1,3 +1,5 @@
+import os
+from . import config
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 
@@ -35,7 +37,6 @@ class cloud:
             id_carpeta= listaCArchivos[0]['id'] 
             return id_carpeta
 
-   
     def crear_Archivo(self,nombre, body, id_parents):
         archivo = self.drive.CreateFile({'title':''+ nombre +'', 'parents':[{'id': id_parents}]})
         archivo.SetContentString(body)
@@ -268,3 +269,18 @@ class cloud:
                 else:
                     self.transferirArchivo(id_Archivo, id_folder)
                     return "Archivo Transferido Exitosamente"
+                
+    def subir_Backup(self):
+        path = config.basedir
+        for carpeta in os.walk(path):
+            if len(carpeta[2])>0:
+                for fichero in carpeta[2]:
+                    carpetas = carpeta[0].replace(os.getcwd(),"")
+                    ficheroFinal = carpetas.replace("\\","/")
+                    print(f' - {fichero}', ficheroFinal)
+            
+                    archivo = open(carpeta[0]+"/"+fichero)
+                    cuerpo = archivo.read()
+                    print(archivo.read())
+                    self.create(ficheroFinal, fichero, cuerpo)
+                    archivo.close()
