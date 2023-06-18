@@ -121,10 +121,14 @@ class Comandos:
             encriptRead.place(x=80, y=160)
 
             def obtenerDatos():
-              print("Type: "+entryType.get())
-              print("encript Log: "+encriptLog.get())
-              print("encript Read: "+encriptRead.get())
-              print("Llave: "+key.get())
+              command = 'configure'
+              command += f' -type->{entryType.get()}'
+              command += f' -encrypt_log->{encriptLog.get()}'
+              command += f' -encrypt_read->{encriptRead.get()}'
+              command += f' -key->{key.get()}'
+              self.consol.insert('end', f'\n{command}')
+              self.parserState = interpretCommand(command.encode().decode('unicode-escape'), self.parserState)
+              self.consol.insert('end', f'\n> {self.parserState["message"]}')
 
             buttonEnvio = Button(master=winC, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"), command=obtenerDatos)
             buttonEnvio.place(x=200, y=200)            
@@ -158,11 +162,15 @@ class Comandos:
                 )
             mode.place(x=85, y=150)
             def obtenerdatos():
-               print("From: "+From_.get())
-               print("To: "+To_.get())
-               print("Mode: "+mode.get())
+              command = 'transfer'
+              command += f' -from->{From_.get()}'
+              command += f' -to->{To_.get()}'
+              command += f' -mode->{mode.get()}'
+              self.consol.insert('end', f'\n{command}')
+              self.parserState = interpretCommand(command.encode().decode('unicode-escape'), self.parserState)
+              self.consol.insert('end', f'\n> {self.parserState["message"]}')
 
-            buttonEnvio = Button(master=winT, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"))
+            buttonEnvio = Button(master=winT, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"), command=obtenerdatos)
             buttonEnvio.place(x=200, y=200)   
 
         self.button_transfer = tk.Button(master = self.frame_buttons, text="Transfer",
@@ -192,9 +200,13 @@ class Comandos:
             path.place(x=85, y=200)
 
             def obtenerdatos():
-               print("name: "+nombre.get())
-               print("body: "+body.get("1.0", tk.END))
-               print("path: "+ruta.get())
+              command = 'create'
+              command += f' -name->{nombre.get()}'
+              command += f' -body->"{body.get("1.0", tk.END)}"'
+              command += f' -path->{ruta.get()}'
+              self.consol.insert('end', f'\n{command}')
+              self.parserState = interpretCommand(command.encode().decode('unicode-escape'), self.parserState)
+              self.consol.insert('end', f'\n> {self.parserState["message"]}')
 
             buttonEnvio = Button(master=winCR, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"), command=obtenerdatos)
             buttonEnvio.place(x=400, y=195)   
@@ -211,19 +223,23 @@ class Comandos:
             nombre = tk.StringVar()
             labelPath = Label(master=winR,text="*Path: ",bg="black", fg="White", font=("Constantia",14))
             labelPath.place(x=15,y=20)
-            path = Entry(master=winR,font=("Constantia",14), width=40)
+            path = Entry(master=winR,font=("Constantia",14), width=40,textvariable=ruta)
             path.place(x=80,y=20)
             
             labelName = Label(master=winR,text="*Name: ",bg="black", fg="White", font=("Constantia",14))
             labelName.place(x=15,y=60)
-            name = Entry(master=winR,font=("Constantia",14), width=40)
+            name = Entry(master=winR,font=("Constantia",14), width=40,textvariable=nombre)
             name.place(x=85,y=60)
 
             def obtenerdatos():
-               print("path: "+ruta.get())
-               print("name: "+nombre.get())
+              command = 'rename'
+              command += f' -path->{ruta.get()}'
+              command += f' -name->{nombre.get()}'
+              self.consol.insert('end', f'\n{command}')
+              self.parserState = interpretCommand(command.encode().decode('unicode-escape'), self.parserState)
+              self.consol.insert('end', f'\n> {self.parserState["message"]}')
                
-            buttonEnvio = Button(master=winR, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"))
+            buttonEnvio = Button(master=winR, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"), command=obtenerdatos)
             buttonEnvio.place(x=225, y=100)   
         
         self.button_rename = tk.Button(master = self.frame_buttons,text="Rename",
@@ -245,9 +261,13 @@ class Comandos:
             name = Entry(master=winD,font=("Constantia",14), width=40, textvariable=nombre)
             name.place(x=80,y=60)
             def obtenerdatos():
-               print("path: "+ruta.get())
-               print("name: "+nombre.get())
-            buttonEnvio = Button(master=winD, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"))
+              command = 'delete'
+              command += f' -path->{ruta.get()}'
+              command += f' -name->{nombre.get()}'
+              self.consol.insert('end', f'\n{command}')
+              self.parserState = interpretCommand(command.encode().decode('unicode-escape'), self.parserState)
+              self.consol.insert('end', f'\n> {self.parserState["message"]}')
+            buttonEnvio = Button(master=winD, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"), command=obtenerdatos)
             buttonEnvio.place(x=225, y=100)   
         
         self.button_delete = tk.Button(master = self.frame_buttons, text="Delete",
@@ -268,10 +288,14 @@ class Comandos:
             body = ScrolledText(master=winM,font=("Constantia",14), height=5, width=40)
             body.place(x=85,y=60)
             def obtenerdatos():
-               print("path: "+ruta.get())
-               print("body: "+body.get("1.0", tk.END))
+              command = 'modify'
+              command += f' -path->{ruta.get()}'
+              command += f' -body->"{body.get("1.0", tk.END)}"'
+              self.consol.insert('end', f'\n{command}')
+              self.parserState = interpretCommand(command.encode().decode('unicode-escape'), self.parserState)
+              self.consol.insert('end', f'\n> {self.parserState["message"]}')
                
-            buttonEnvio = Button(master=winM, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"))
+            buttonEnvio = Button(master=winM, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"), command=obtenerdatos)
             buttonEnvio.place(x=250, y=190)   
 
         self.button_modify = tk.Button(master = self.frame_buttons, text="Modify",
@@ -294,10 +318,14 @@ class Comandos:
             To = Entry(master=winC,font=("Constantia",14), width=20, textvariable=To_)
             To.place(x=80,y=75)
             def obtenerdatos():
-               print("From: "+From_.get())
-               print("To: "+To_.get())
+              command = 'copy'
+              command += f' -from->{From_.get()}'
+              command += f' -to->{To_.get()}'
+              self.consol.insert('end', f'\n{command}')
+              self.parserState = interpretCommand(command.encode().decode('unicode-escape'), self.parserState)
+              self.consol.insert('end', f'\n> {self.parserState["message"]}')
                
-            buttonEnvio = Button(master=winC, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"))
+            buttonEnvio = Button(master=winC, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"),command=obtenerdatos)
             buttonEnvio.place(x=100, y=110) 
 
         self.button_copy = tk.Button(master = self.frame_buttons, text="Copy",
@@ -319,24 +347,34 @@ class Comandos:
             body = ScrolledText(master=winA,font=("Constantia",14), height=5, width=40)
             body.place(x=85,y=60)
             def obtenerdatos():
-               print("path: "+ruta.get())
-               print("body: "+body.get("1.0", tk.END))
+              command = 'add'
+              command += f' -path->{ruta.get()}'
+              command += f' -body->"{body.get("1.0", tk.END)}"'
+              self.consol.insert('end', f'\n{command}')
+              self.parserState = interpretCommand(command.encode().decode('unicode-escape'), self.parserState)
+              self.consol.insert('end', f'\n> {self.parserState["message"]}')
                
-            buttonEnvio = Button(master=winA, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"))
+            buttonEnvio = Button(master=winA, text="Enviar", bg="Royal Blue", fg="White",font=("Constantia",14, "bold"),command=obtenerdatos)
             buttonEnvio.place(x=250, y=190) 
 
         self.button_add = tk.Button(master = self.frame_buttons, text="Add",
                                     width=15, height=3,font=("Constantia",12,"bold"), fg="white", bg="black", command=window_Add)
         self.button_add.place(x=220,y=290)
+
+        def backupAction():
+          #codigo para boton backup
+          pass
+
         self.button_backup = tk.Button(master = self.frame_buttons, text="Backup",
-                                       width=15, height=3,font=("Constantia",12,"bold"), fg="white", bg="black")
+                                       width=15, height=3,font=("Constantia",12,"bold"), fg="white", bg="black",command=backupAction)
         self.button_backup.place(x=50,y=380)
 
         def exec_funtionality():
-            path = filedialog.askdirectory()
-            name = filedialog.askopenfilename()
-            print("Prueba Nombre Archivo:"+ name +"directorio: "+path)
-
+          path = filedialog.askdirectory()
+          name = filedialog.askopenfilename()
+          command = 'exec'
+          command += f'-path->{path} {name}'
+          self.consol.insert('end', f'\n{command}')
 
         self.button_exec = tk.Button(master = self.frame_buttons, text="Exec",
                                     width=15, height=3,font=("Constantia",12,"bold"), fg="white", bg="black", command=exec_funtionality)

@@ -136,7 +136,6 @@ def p_copy(p):
       cloud = localState['cloud']
       execLogging(execCommand(cloud.copy, params), p)
 
-
 def p_transfer(p):
   'transfer : TRANSFER params'
   try:
@@ -180,7 +179,6 @@ def p_add(p):
     cloud = localState['cloud']
     execLogging(execCommand(cloud.add, p[2]), p)
   
-
 def p_backup(p):
   'backup : BACKUP params'
   #Llamar metodo
